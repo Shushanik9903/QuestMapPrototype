@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("QuestMapPrototypeModuleRules")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Development")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+34bd61fa0355ee881a2790a7637a7f1c7fb744a5")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+56caa78751fdb4c4dac5bbfa5db745ea5e3c35ca")]
 [assembly: System.Reflection.AssemblyProductAttribute("QuestMapPrototypeModuleRules")]
 [assembly: System.Reflection.AssemblyTitleAttribute("QuestMapPrototypeModuleRules")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

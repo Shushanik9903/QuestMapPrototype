@@ -11,6 +11,7 @@
     <None Include="..\..\Source\QuestMapPrototypeEditor.Target.cs">
       <Filter>Source</Filter>
     </None>
+    <None Include="..\..\.vsconfig" />
     <Filter Include="Config">
       <UniqueIdentifier>{FA535FFB-25E1-3D20-B416-52F9BE21E06E}</UniqueIdentifier>
     </Filter>
@@ -52,6 +53,45 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\QuestMapPrototype\QuestMapPrototypeGameMode.h">
       <Filter>Source\QuestMapPrototype</Filter>
+    </ClCompile>
+    <Filter Include="Source\QuestMapPrototype\Game">
+      <UniqueIdentifier>{3547E0AC-6A81-36B8-8208-5C02B509397B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\QuestMapPrototype\Game\Controller">
+      <UniqueIdentifier>{F56321F2-F6D3-32D6-87C8-C473D2D809BA}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\QuestMapPrototype\Game\Controller\QuestMapPlayerController.cpp">
+      <Filter>Source\QuestMapPrototype\Game\Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\QuestMapPrototype\Game\Controller\QuestMapPlayerController.h">
+      <Filter>Source\QuestMapPrototype\Game\Controller</Filter>
+    </ClCompile>
+    <Filter Include="Source\QuestMapPrototype\Quests">
+      <UniqueIdentifier>{FB555791-8E72-32EB-A7E0-C472B6C1D94E}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\QuestMapPrototype\Quests\QuestData.cpp">
+      <Filter>Source\QuestMapPrototype\Quests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\QuestMapPrototype\Quests\QuestData.h">
+      <Filter>Source\QuestMapPrototype\Quests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\QuestMapPrototype\Quests\QuestDataAsset.cpp">
+      <Filter>Source\QuestMapPrototype\Quests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\QuestMapPrototype\Quests\QuestDataAsset.h">
+      <Filter>Source\QuestMapPrototype\Quests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\QuestMapPrototype\Quests\QuestGoal.cpp">
+      <Filter>Source\QuestMapPrototype\Quests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\QuestMapPrototype\Quests\QuestGoal.h">
+      <Filter>Source\QuestMapPrototype\Quests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\QuestMapPrototype\Quests\QuestManager.cpp">
+      <Filter>Source\QuestMapPrototype\Quests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\QuestMapPrototype\Quests\QuestManager.h">
+      <Filter>Source\QuestMapPrototype\Quests</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

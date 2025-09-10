@@ -5,6 +5,21 @@
 			"guid": "00000000000000000000000000000000",
 			"description": "Default Uncontrolled Changelist",
 			"files": [
+				"C:/Users/gevor/OneDrive/Desktop/QuestMapPrototype/QuestMapPrototype/Content/GamePlay/GameMode/BP_GameMode.uasset",
+				"C:/Users/gevor/OneDrive/Desktop/QuestMapPrototype/QuestMapPrototype/Content/GamePlay/GameState/BP_GameState.uasset",
+				"C:/Users/gevor/OneDrive/Desktop/QuestMapPrototype/QuestMapPrototype/Content/GamePlay/PlayerController/BP_PlayerCOntroller.uasset",
+				"C:/Users/gevor/OneDrive/Desktop/QuestMapPrototype/QuestMapPrototype/Content/GamePlay/PlayerState/BP_PlayerState.uasset",
+				"C:/Users/gevor/OneDrive/Desktop/QuestMapPrototype/QuestMapPrototype/Content/GamePlay/HUD/BP_HUD.uasset",
+				"C:/Users/gevor/OneDrive/Desktop/QuestMapPrototype/QuestMapPrototype/Content/ThirdPerson/Maps/ThirdPersonMap.umap",
+				"C:/Users/gevor/OneDrive/Desktop/QuestMapPrototype/QuestMapPrototype/Content/Blueprints/BP_Camera.uasset",
+				"C:/Users/gevor/OneDrive/Desktop/QuestMapPrototype/QuestMapPrototype/Content/__ExternalActors__/ThirdPerson/Maps/ThirdPersonMap/9/JY/TDQS456H83YGDO2I2LUR10.uasset",
+				"C:/Users/gevor/OneDrive/Desktop/QuestMapPrototype/QuestMapPrototype/Content/UI/WBP_Journal.uasset",
+				"C:/Users/gevor/OneDrive/Desktop/QuestMapPrototype/QuestMapPrototype/Content/UI/T_MapImage.uasset",
+				"C:/Users/gevor/OneDrive/Desktop/QuestMapPrototype/QuestMapPrototype/Content/UI/WBP_Map.uasset",
+				"C:/Users/gevor/OneDrive/Desktop/QuestMapPrototype/QuestMapPrototype/Content/UI/WBP_Marker.uasset",
+				"C:/Users/gevor/OneDrive/Desktop/QuestMapPrototype/QuestMapPrototype/Content/DataAssets/DA_UQuestDataAsset.uasset",
+				"C:/Users/gevor/OneDrive/Desktop/QuestMapPrototype/QuestMapPrototype/Content/Blueprints/NewBlueprint.uasset",
+				"C:/Users/gevor/OneDrive/Desktop/QuestMapPrototype/QuestMapPrototype/Content/GamePlay/S_QuestEntry.uasset",
 				"C:/Users/GBM/Desktop/QuestMapPrototype/QuestMapPrototype/Content/StarterContent/Architecture/Floor_400x400.uasset"
 			]
 		}
