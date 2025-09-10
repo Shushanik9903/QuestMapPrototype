@@ -1,0 +1,24 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "c:\\users\\gbm\\desktop\\questmapprototype\\questmapprototype\\intermediate\\build\\win64\\unrealeditor\\inc\\questmapprototype\\uht\\questmapprototypecharacter.gen.cpp",
+        "ProvidedModule": "",
+        "PCH": "c:\\users\\gbm\\desktop\\questmapprototype\\questmapprototype\\intermediate\\build\\win64\\x64\\questmapprototypeeditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.cpp20.h.pch",
+        "Includes": [
+            "c:\\users\\gbm\\desktop\\questmapprototype\\questmapprototype\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\questmapprototype\\definitions.questmapprototype.h",
+            "c:\\users\\gbm\\desktop\\questmapprototype\\questmapprototype\\source\\questmapprototype\\questmapprototypecharacter.h",
+            "c:\\program files\\epic games\\ue_5.5\\engine\\source\\runtime\\engine\\classes\\gameframework\\character.h",
+            "c:\\program files\\epic games\\ue_5.5\\engine\\source\\runtime\\engine\\classes\\gameframework\\charactermovementreplication.h",
+            "c:\\program files\\epic games\\ue_5.5\\engine\\source\\runtime\\net\\core\\public\\net\\core\\nettoken\\nettokenexportcontext.h",
+            "c:\\program files\\epic games\\ue_5.5\\engine\\source\\runtime\\experimental\\iris\\core\\public\\iris\\serialization\\irisobjectreferencepackagemap.h",
+            "c:\\program files\\epic games\\ue_5.5\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\iriscore\\uht\\irisobjectreferencepackagemap.generated.h",
+            "c:\\program files\\epic games\\ue_5.5\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\charactermovementreplication.generated.h",
+            "c:\\program files\\epic games\\ue_5.5\\engine\\source\\runtime\\engine\\classes\\gameframework\\rootmotionsource.h",
+            "c:\\program files\\epic games\\ue_5.5\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\rootmotionsource.generated.h",
+            "c:\\program files\\epic games\\ue_5.5\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\character.generated.h",
+            "c:\\users\\gbm\\desktop\\questmapprototype\\questmapprototype\\intermediate\\build\\win64\\unrealeditor\\inc\\questmapprototype\\uht\\questmapprototypecharacter.generated.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

@@ -1,0 +1,14 @@
+{
+	"Targets": [
+		{
+			"Name": "QuestMapPrototype",
+			"Path": "..\\Source\\QuestMapPrototype.Target.cs",
+			"Type": "Game"
+		},
+		{
+			"Name": "QuestMapPrototypeEditor",
+			"Path": "..\\Source\\QuestMapPrototypeEditor.Target.cs",
+			"Type": "Editor"
+		}
+	]
+}

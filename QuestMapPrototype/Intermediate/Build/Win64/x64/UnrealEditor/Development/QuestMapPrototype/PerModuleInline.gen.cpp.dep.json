@@ -1,0 +1,14 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "c:\\users\\gbm\\desktop\\questmapprototype\\questmapprototype\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\questmapprototype\\permoduleinline.gen.cpp",
+        "ProvidedModule": "",
+        "PCH": "c:\\users\\gbm\\desktop\\questmapprototype\\questmapprototype\\intermediate\\build\\win64\\x64\\questmapprototypeeditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.cpp20.h.pch",
+        "Includes": [
+            "c:\\users\\gbm\\desktop\\questmapprototype\\questmapprototype\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\questmapprototype\\definitions.questmapprototype.h",
+            "c:\\program files\\epic games\\ue_5.5\\engine\\source\\runtime\\core\\public\\hal\\permoduleinline.inl"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}
