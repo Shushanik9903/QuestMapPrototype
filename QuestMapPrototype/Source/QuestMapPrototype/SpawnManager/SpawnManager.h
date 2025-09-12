@@ -5,52 +5,82 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "QuestMapPrototype/Pickups/CoinPickUp/CoinPickup.h"
+#include "QuestMapPrototype/Pickups/EnergyPickUp/HealthPickup.h"
 #include "SpawnManager.generated.h"
 
+
+class ACoinPickup;
+class AHealthPickup;
+
 USTRUCT()
-struct FSpawnPoint
+struct FSpawnPointBase
 {
-	GENERATED_BODY()
-	FVector Location;
-	AActor* SourceWall = nullptr;
+    GENERATED_BODY()
+    FVector Location = FVector::ZeroVector;
+    AActor* SourceActor = nullptr;
 };
+
+USTRUCT()
+struct FSpawnCoinsPoint : public FSpawnPointBase
+{
+    GENERATED_BODY()
+};
+
+USTRUCT()
+struct FSpawnEnergyPoint : public FSpawnPointBase
+{
+    GENERATED_BODY()
+    AStaticMeshActor* SourceMesh = nullptr;
+};
+
 UCLASS()
 class QUESTMAPPROTOTYPE_API ASpawnManager : public AActor
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 public:
-	ASpawnManager();
-
-	bool GetLandscapeHitBelow(const FVector& Start, FVector& OutHitLocation) const;
+    ASpawnManager();
 
 protected:
-	virtual void BeginPlay() override;
+    virtual void BeginPlay() override;
+    void GatherGenericPoints(const FString& NameSubstring, TArray<FSpawnPointBase>& OutPoints, TFunction<void(const AActor*, FSpawnPointBase&)> SetSource);
+    void GatherHousesAndSpawnCoins();
+    void GatherBarrelsAndSpawnEnergy();
+    FVector FindNearCenterLocation(const AActor* LActor) const;
+    bool GetLandscapeHitBelow(const FVector& Start, FVector& OutHitLocation, AActor*& OutHitActor) const;
+    void SpawnCoins();
+    void SpawnEnergy();
+    void OnRelocateTick();
+    FVector ChooseValidSpawnLocationFromArray(const TArray<FSpawnPointBase>& Points, const TArray<AActor*>& ExistingActors) const;
 
-	void GatherWallsAndSpawnPoints();
-	void SpawnCoins();
-	FVector FindNearCenterLocation(const AActor* HouseActor) const;
-	void OnRelocateTick();
+    UPROPERTY()
+    TArray<FSpawnCoinsPoint> SpawnPointsForCoins;
 
-	UPROPERTY()
-	TArray<FSpawnPoint> SpawnPoints;
+    UPROPERTY()
+    TArray<FSpawnEnergyPoint> SpawnPointsForEnergy;
 
-	UPROPERTY()
-	TArray<ACoinPickup*> SpawnedCoins;
+    UPROPERTY()
+    TArray<ACoinPickup*> SpawnedCoins;
 
-	FTimerHandle RelocateTimerHandle;
-	
-	UPROPERTY(EditAnywhere, Category="Spawn")
-	TSubclassOf<ACoinPickup> CoinClass;
+    UPROPERTY()
+    TArray<AHealthPickup*> SpawnedEnergy;
 
-	UPROPERTY(EditAnywhere, Category="Spawn")
-	float RelocateInterval = 6.0f;
+    FTimerHandle RelocateTimerHandle;
+    
+    UPROPERTY(EditAnywhere, Category="Spawn")
+    TSubclassOf<ACoinPickup> CoinClass;
 
-	UPROPERTY(EditAnywhere, Category="Spawn")
-	float MinSeparation = 50.f;
+    UPROPERTY(EditAnywhere, Category="Spawn")
+    TSubclassOf<AHealthPickup> EnergyClass;
 
-	UPROPERTY(EditAnywhere, Category="Spawn|Landscape")
-	float TraceDownDistance = 2000.f;
+    UPROPERTY(EditAnywhere, Category="Spawn")
+    float RelocateInterval = 6.0f;
 
-	UPROPERTY(EditAnywhere, Category="Spawn|Landscape")
-	float SpawnHeightAboveSurface = 20.f;
+    UPROPERTY(EditAnywhere, Category="Spawn")
+    float MinSeparation = 50.f;
+
+    UPROPERTY(EditAnywhere, Category="Spawn|Landscape")
+    float TraceDownDistance = 2000.f;
+
+    UPROPERTY(EditAnywhere, Category="Spawn|Landscape")
+    float SpawnHeightAboveSurface = 50.f;
 };

@@ -8,6 +8,7 @@
 AHealthPickup::AHealthPickup()
 {
 	bReplicates = true;
+    PrimaryActorTick.bCanEverTick = false;
 }
 
 void AHealthPickup::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -38,3 +39,14 @@ void AHealthPickup::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AA
     }
 
 }
+
+void AHealthPickup::MoveToLocation(const FVector& NewLocation)
+{
+       SetActorLocation(NewLocation);
+}
+
+void AHealthPickup::BeginPlay()
+{
+       Super::BeginPlay();
+}
+

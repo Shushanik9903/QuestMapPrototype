@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "../Pickup.h"
-#include "QuestMapPrototype/Pickups/Pickup.h"
 #include "HealthPickup.generated.h"
 
 /**
@@ -25,11 +24,12 @@ protected:
 		bool bFromSweep,
 		const FHitResult& SweepResult
 	) override;
-private:
+public:
 
-	UPROPERTY(EditAnywhere)
-	float HealAmount = 100.f;
+	UFUNCTION()
+	void MoveToLocation(const FVector& NewLocation);
 
-	UPROPERTY(EditAnywhere)
-	float HealingTime = 5.f;	
+protected:
+	virtual void BeginPlay() override;
+
 };

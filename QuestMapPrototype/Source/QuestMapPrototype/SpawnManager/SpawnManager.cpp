@@ -5,10 +5,12 @@
 #include "EngineUtils.h"
 #include "TimerManager.h"
 #include "DrawDebugHelpers.h"
-#include "Landscape.h"
+#include "Engine/StaticMeshActor.h"
 #include "QuestMapPrototype/GameInstance/QuestGameInstance.h"
 #include "QuestMapPrototype/Pickups/CoinPickUp/CoinPickup.h"
 
+
+DEFINE_LOG_CATEGORY_STATIC(LogSpawnManager, Log, All);
 
 ASpawnManager::ASpawnManager()
 {
@@ -18,66 +20,94 @@ ASpawnManager::ASpawnManager()
 void ASpawnManager::BeginPlay()
 {
     Super::BeginPlay();
-    GatherWallsAndSpawnPoints();
+    GatherHousesAndSpawnCoins();
+    GatherBarrelsAndSpawnEnergy();
     SpawnCoins();
+    SpawnEnergy();
     if (RelocateInterval > 0.f)
     {
         GetWorldTimerManager().SetTimer(RelocateTimerHandle, this, &ASpawnManager::OnRelocateTick, RelocateInterval, true);
     }
 }
 
-void ASpawnManager::GatherWallsAndSpawnPoints()
+void ASpawnManager::GatherGenericPoints(const FString& NameSubstring, TArray<FSpawnPointBase>& OutPoints, TFunction<void(const AActor*, FSpawnPointBase&)> SetSource)
 {
-    SpawnPoints.Empty();
+    OutPoints.Empty();
+
+    FVector WorldCenter = FVector::ZeroVector;
     for (TActorIterator<AActor> It(GetWorld()); It; ++It)
     {
         AActor* Actor = *It;
         if (!Actor) continue;
-
         FString Name = Actor->GetName();
-        if (Name.ToLower().Contains(TEXT("house")))
+        if (!Name.ToLower().Contains(NameSubstring.ToLower())) continue;
+        FVector Origin;
+        FVector BoxExtent;
+        Actor->GetActorBounds(true, Origin, BoxExtent);
+        FVector Dir = (WorldCenter - Origin);
+        if (Dir.IsNearlyZero()) Dir = FVector::ForwardVector;
+        Dir.Normalize();
+        float MaxExtent = BoxExtent.Size();
+        FVector Candidate = Origin + Dir * MaxExtent * 0.6f;
+        FVector TraceStart = Candidate + FVector(0.f, 0.f, TraceDownDistance * 0.5f);
+        AActor* HitActor = nullptr;
+        FVector HitLocation;
+        if (GetLandscapeHitBelow(TraceStart, HitLocation, HitActor))
         {
-            FVector Near = FindNearCenterLocation(Actor);
-            FVector TraceStart = Near + FVector(0.f, 0.f, TraceDownDistance * 0.5f);
-            FVector HitLocation;
-            if (GetLandscapeHitBelow(TraceStart, HitLocation))
-            {
-                FVector SpawnLoc = HitLocation + FVector(0.f, 0.f, SpawnHeightAboveSurface);
-                FSpawnPoint SP;
-                SP.Location = SpawnLoc;
-                SP.SourceWall = Actor;
-                SpawnPoints.Add(SP);
-            }
-            else
-            {
-                FVector FallbackStart = Near + FVector(0.f, 0.f, 300.f);
-                if (GetLandscapeHitBelow(FallbackStart, HitLocation))
-                {
-                    FVector SpawnLoc = HitLocation + FVector(0.f, 0.f, SpawnHeightAboveSurface);
-                    FSpawnPoint SP;
-                    SP.Location = SpawnLoc;
-                    SP.SourceWall = Actor;
-                    SpawnPoints.Add(SP);
-                }
-                else
-                {
-                    FVector SpawnLoc = Near + FVector(0.f, 0.f, SpawnHeightAboveSurface);
-                    FSpawnPoint SP;
-                    SP.Location = SpawnLoc;
-                    SP.SourceWall = Actor;
-                    SpawnPoints.Add(SP);
-                }
-            }
+            FVector SpawnLoc = HitLocation + FVector(0.f, 0.f, SpawnHeightAboveSurface);
+            FSpawnPointBase P;
+            P.Location = SpawnLoc;
+            P.SourceActor = Actor;
+            SetSource(Actor, P);
+            OutPoints.Add(P);
+        }
+        else
+        {
+            FVector SpawnLoc = Candidate + FVector(0.f, 0.f, SpawnHeightAboveSurface);
+            FSpawnPointBase P;
+            P.Location = SpawnLoc;
+            P.SourceActor = Actor;
+            SetSource(Actor, P);
+            OutPoints.Add(P);
         }
     }
 }
 
-FVector ASpawnManager::FindNearCenterLocation(const AActor* HouseActor) const
+void ASpawnManager::GatherHousesAndSpawnCoins()
 {
-    if (!HouseActor) return FVector::ZeroVector;
+    GatherGenericPoints(TEXT("house"),
+        reinterpret_cast<TArray<FSpawnPointBase>&>(SpawnPointsForCoins),
+        [](const AActor* Actor, FSpawnPointBase& OutP)
+        {
+        }
+    );
+}
+
+void ASpawnManager::GatherBarrelsAndSpawnEnergy()
+{
+    TArray<FSpawnPointBase> TempPoints;
+    GatherGenericPoints(TEXT("prop_barrel"), TempPoints,
+        [](const AActor* Actor, FSpawnPointBase& OutP)
+        {
+        }
+    );
+    SpawnPointsForEnergy.Empty();
+    for (const FSpawnPointBase& P : TempPoints)
+    {
+        FSpawnEnergyPoint E;
+        E.Location = P.Location;
+        E.SourceMesh = Cast<AStaticMeshActor>(P.SourceActor);
+        E.SourceActor = P.SourceActor;
+        SpawnPointsForEnergy.Add(E);
+    }
+}
+
+FVector ASpawnManager::FindNearCenterLocation(const AActor* LActor) const
+{
+    if (!LActor) return FVector::ZeroVector;
     FVector Origin;
     FVector BoxExtent;
-    HouseActor->GetActorBounds(true, Origin, BoxExtent);
+    LActor->GetActorBounds(true, Origin, BoxExtent);
     FVector WorldCenter = FVector::ZeroVector;
     FVector Dir = (WorldCenter - Origin);
     if (Dir.IsNearlyZero()) return Origin;
@@ -86,43 +116,49 @@ FVector ASpawnManager::FindNearCenterLocation(const AActor* HouseActor) const
     FVector Candidate = Origin + Dir * MaxExtent * 0.6f;
     FHitResult Hit;
     FCollisionQueryParams Params;
-    Params.AddIgnoredActor(HouseActor);
+    Params.AddIgnoredActor(const_cast<AActor*>(LActor));
     bool bHit = GetWorld()->SweepSingleByChannel(Hit, Candidate + FVector(0,0,50.f), Candidate - FVector(0,0,50.f),
         FQuat::Identity, ECC_WorldStatic, FCollisionShape::MakeSphere(20.f), Params);
     if (!bHit) return Candidate;
     return Origin;
 }
 
-bool ASpawnManager::GetLandscapeHitBelow(const FVector& Start, FVector& OutHitLocation) const
+bool ASpawnManager::GetLandscapeHitBelow(const FVector& Start, FVector& OutHitLocation, AActor*& OutHitActor) const
 {
+    OutHitActor = nullptr;
     FVector End = Start - FVector(0.f, 0.f, TraceDownDistance);
-
     FHitResult Hit;
     FCollisionQueryParams Params;
     Params.bTraceComplex = true;
     Params.AddIgnoredActor(this);
-
     bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_WorldStatic, Params);
     if (!bHit) return false;
+    OutHitLocation = Hit.ImpactPoint;
+    OutHitActor = Hit.GetActor();
+    return true;
+}
 
-    if (Hit.GetActor())
+FVector ASpawnManager::ChooseValidSpawnLocationFromArray(const TArray<FSpawnPointBase>& Points, const TArray<AActor*>& ExistingActors) const
+{
+    if (Points.Num() == 0) return FVector::ZeroVector;
+
+    for (int attempt = 0; attempt < 20; ++attempt)
     {
-        if (Hit.GetActor()->IsA(ALandscape::StaticClass()))
+        int32 idx = FMath::RandRange(0, Points.Num() - 1);
+        FVector Candidate = Points[idx].Location;
+        bool bOk = true;
+        for (AActor* Existing : ExistingActors)
         {
-            OutHitLocation = Hit.ImpactPoint;
-            return true;
-        }
-
-        if (Hit.Component.IsValid())
-        {
-            if (Hit.Component->IsA(ULandscapeComponent::StaticClass()))
+            if (!Existing) continue;
+            if (FVector::DistSquared(Existing->GetActorLocation(), Candidate) < MinSeparation * MinSeparation)
             {
-                OutHitLocation = Hit.ImpactPoint;
-                return true;
+                bOk = false;
+                break;
             }
         }
+        if (bOk) return Candidate;
     }
-    return false;
+    return Points[0].Location;
 }
 
 void ASpawnManager::SpawnCoins()
@@ -131,32 +167,15 @@ void ASpawnManager::SpawnCoins()
     UQuestGameInstance* GI = Cast<UQuestGameInstance>(GetGameInstance());
     if (!GI) return;
     int32 CoinCount = GI->CoinCount;
-    if (CoinCount <= 0 || SpawnPoints.Num() == 0 || !CoinClass) return;
+    if (CoinCount <= 0 || SpawnPointsForCoins.Num() == 0 || !CoinClass) return;
+
     for (int32 i = 0; i < CoinCount; ++i)
     {
-        int32 PickIdx = FMath::RandRange(0, SpawnPoints.Num() - 1);
-        FVector Loc = SpawnPoints[PickIdx].Location;
-        int tries = 0;
-        while (tries < 10)
-        {
-            bool bOk = true;
-            for (ACoinPickup* C : SpawnedCoins)
-            {
-                if (!C) continue;
-                if (FVector::DistSquared(C->GetActorLocation(), Loc) < MinSeparation * MinSeparation)
-                {
-                    bOk = false;
-                    break;
-                }
-            }
-            if (bOk) break;
-            PickIdx = FMath::RandRange(0, SpawnPoints.Num() - 1);
-            Loc = SpawnPoints[PickIdx].Location;
-            ++tries;
-        }
+        FVector Loc = ChooseValidSpawnLocationFromArray(reinterpret_cast<const TArray<FSpawnPointBase>&>(SpawnPointsForCoins),
+            reinterpret_cast<const TArray<AActor*>&>(SpawnedCoins)); // safe-ish cast for location checking
+
         FActorSpawnParameters Params;
         Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-        Loc.Z = 890;
         ACoinPickup* NewCoin = GetWorld()->SpawnActor<ACoinPickup>(CoinClass, Loc, FRotator::ZeroRotator, Params);
         if (NewCoin)
         {
@@ -165,45 +184,58 @@ void ASpawnManager::SpawnCoins()
     }
 }
 
+void ASpawnManager::SpawnEnergy()
+{
+    SpawnedEnergy.Empty();
+    UQuestGameInstance* GI = Cast<UQuestGameInstance>(GetGameInstance());
+    if (!GI) return;
+    int32 EnergyCount = GI->EnergyCount;
+    if (EnergyCount <= 0 || SpawnPointsForEnergy.Num() == 0 || !EnergyClass) return;
+
+    for (int32 i = 0; i < EnergyCount; ++i)
+    {
+        TArray<FSpawnPointBase> BasePoints;
+        BasePoints.Reserve(SpawnPointsForEnergy.Num());
+        for (const FSpawnEnergyPoint& E : SpawnPointsForEnergy)
+        {
+            FSpawnPointBase B;
+            B.Location = E.Location;
+            B.SourceActor = E.SourceMesh;
+            BasePoints.Add(B);
+        }
+        FVector Loc = ChooseValidSpawnLocationFromArray(BasePoints, reinterpret_cast<const TArray<AActor*>&>(SpawnedEnergy));
+        FActorSpawnParameters Params;
+        Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+        AHealthPickup* NewEnergy = GetWorld()->SpawnActor<AHealthPickup>(EnergyClass, Loc, FRotator::ZeroRotator, Params);
+        if (NewEnergy)
+        {
+            SpawnedEnergy.Add(NewEnergy);
+        }
+    }
+}
+
 void ASpawnManager::OnRelocateTick()
 {
-    if (SpawnedCoins.Num() == 0 || SpawnPoints.Num() == 0) return;
-
-    for (ACoinPickup* Coin : SpawnedCoins)
+    if (SpawnedCoins.Num() > 0 && SpawnPointsForCoins.Num() > 0)
     {
-        if (!Coin) continue;
-
-        FVector Current = Coin->GetActorLocation();
-
-        int tries = 0;
-        FVector Chosen = Current;
-        while (tries < 20)
+        for (ACoinPickup* Coin : SpawnedCoins)
         {
-            int pick = FMath::RandRange(0, SpawnPoints.Num() - 1);
-            FVector Candidate = SpawnPoints[pick].Location;
-
-            if (FVector::DistSquared(Candidate, Current) < KINDA_SMALL_NUMBER)
-            {
-                ++tries;
-                continue;
-            }
-            bool bOk = true;
-            for (ACoinPickup* Other : SpawnedCoins)
-            {
-                if (!Other || Other == Coin) continue;
-                if (FVector::DistSquared(Other->GetActorLocation(), Candidate) < MinSeparation * MinSeparation)
-                {
-                    bOk = false;
-                    break;
-                }
-            }
-            if (bOk)
-            {
-                Chosen = Candidate;
-                break;
-            }
-            ++tries;
+            if (!Coin) continue;
+            FVector Chosen = ChooseValidSpawnLocationFromArray(reinterpret_cast<const TArray<FSpawnPointBase>&>(SpawnPointsForCoins),
+                reinterpret_cast<const TArray<AActor*>&>(SpawnedCoins));
+            Coin->MoveToLocation(Chosen);
         }
-        Coin->MoveToLocation(Chosen);
+    }
+    if (SpawnedEnergy.Num() > 0 && SpawnPointsForEnergy.Num() > 0)
+    {
+        for (AHealthPickup* Energy : SpawnedEnergy)
+        {
+            if (!Energy) continue;
+            TArray<AActor*> ExistingEnergyActors;
+            ExistingEnergyActors.Reserve(SpawnedEnergy.Num());
+            for (AHealthPickup* E : SpawnedEnergy) ExistingEnergyActors.Add(E);
+            FVector Chosen = ChooseValidSpawnLocationFromArray(reinterpret_cast<const TArray<FSpawnPointBase>&>(SpawnPointsForEnergy), ExistingEnergyActors);
+            Energy->MoveToLocation(Chosen);
+        }
     }
 }
