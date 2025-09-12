@@ -2,7 +2,8 @@
 
 
 #include "HealthPickup.h"
-
+#include "QuestMapPrototype/QuestMapPrototypeCharacter.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 AHealthPickup::AHealthPickup()
 {
@@ -13,5 +14,27 @@ void AHealthPickup::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AA
 {
 	Super::OnSphereOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 
-	Destroy();
+	if (!IsValid(OtherActor) && OtherActor == this) return;
+
+    if (AQuestMapPrototypeCharacter* L_Character = Cast<AQuestMapPrototypeCharacter>(OtherActor);IsValid(L_Character))
+    {
+       
+        L_Character->GetCharacterMovement()->MaxWalkSpeed = 1000.f;
+
+        L_Character->GetWorldTimerManager().ClearTimer(L_Character->SpeedResetTimer);
+
+        L_Character->GetWorldTimerManager().SetTimer(
+            L_Character->SpeedResetTimer,
+            [L_Character]()
+            {
+                if (IsValid(L_Character))
+                {
+                    L_Character->GetCharacterMovement()->MaxWalkSpeed = 500.f;
+                }
+            },
+            10.f, false);
+
+        Destroy();
+    }
+
 }

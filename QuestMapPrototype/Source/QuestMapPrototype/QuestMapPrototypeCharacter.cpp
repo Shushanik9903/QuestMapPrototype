@@ -127,3 +127,9 @@ void AQuestMapPrototypeCharacter::Look(const FInputActionValue& Value)
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
 }
+
+void AQuestMapPrototypeCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	GetWorldTimerManager().ClearTimer(SpeedResetTimer);
+	Super::EndPlay(EndPlayReason);
+}
