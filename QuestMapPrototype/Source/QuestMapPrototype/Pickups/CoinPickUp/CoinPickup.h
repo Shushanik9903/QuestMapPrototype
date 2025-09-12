@@ -30,4 +30,14 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	float JumpBuffTime = 30.f;
+
+public:
+	ACoinPickup();
+
+	UFUNCTION()
+	void MoveToLocation(const FVector& NewLocation);
+
+protected:
+	virtual void BeginPlay() override;
+
 };
