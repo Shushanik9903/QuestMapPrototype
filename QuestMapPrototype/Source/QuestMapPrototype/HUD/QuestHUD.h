@@ -27,7 +27,12 @@ class QUESTMAPPROTOTYPE_API AQuestHUD : public AHUD
 	UPROPERTY()
 	TObjectPtr<class UJournalUserWidget> JournalWidgetRef = nullptr;
 	
-
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = true))
+	TSubclassOf<class UUserWidget> HUDWidgetSubClass = nullptr;
+	
+	UPROPERTY()
+	TObjectPtr<class UUserWidget> HUDWidgetRef = nullptr;
+	
 	virtual void BeginPlay() override;
 public:	
 	UFUNCTION()
@@ -35,4 +40,8 @@ public:
 	
 	UFUNCTION()
 	void ShowJournalWidget();
+
+	UFUNCTION()
+	void ShowHUDWidget();
+	
 };

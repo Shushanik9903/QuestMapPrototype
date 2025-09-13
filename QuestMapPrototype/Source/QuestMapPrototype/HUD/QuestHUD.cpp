@@ -11,10 +11,18 @@
 void AQuestHUD::BeginPlay()
 {
 	Super::BeginPlay();
+	ShowHUDWidget();
 }
 
 void AQuestHUD::ShowMapWidget()
 {
+	if (IsValid(JournalWidgetRef) )
+	{
+		if (JournalWidgetRef->IsInViewport())
+		{
+			ShowMapWidget();
+		}
+	}
 	AQuestMapPlayerController* PC = Cast<AQuestMapPlayerController>(GetOwningPlayerController()); 
 	if (!IsValid(PC))
 	{
@@ -42,6 +50,13 @@ void AQuestHUD::ShowMapWidget()
 
 void AQuestHUD::ShowJournalWidget()
 {
+	if (IsValid(FullMapWidgetRef) )
+	{
+		if (FullMapWidgetRef->IsInViewport())
+		{
+			return;
+		}
+	}
 	AQuestMapPlayerController* PC = Cast<AQuestMapPlayerController>(GetOwningPlayerController()); 
 	if (!IsValid(PC))
 	{
@@ -59,10 +74,37 @@ void AQuestHUD::ShowJournalWidget()
 		if(!JournalWidgetRef->IsInViewport())
 		{
 			JournalWidgetRef->AddToViewport(1000);
+			PC->SetShowMouseCursor(true);
+			PC->SetInputMode(FInputModeGameAndUI());
 		}
 		else
 		{
 			JournalWidgetRef->RemoveFromParent();
+			PC->SetShowMouseCursor(false);
+			PC->SetInputMode(FInputModeGameOnly());
+		}
+	}
+}
+
+void AQuestHUD::ShowHUDWidget()
+{
+	AQuestMapPlayerController* PC = Cast<AQuestMapPlayerController>(GetOwningPlayerController()); 
+	if (!IsValid(PC))
+	{
+		return;
+	}
+	if(!IsValid(HUDWidgetRef))
+	{
+		if(IsValid(HUDWidgetSubClass))
+		{
+			HUDWidgetRef = CreateWidget<UUserWidget>(PC, HUDWidgetSubClass);
+		}
+	}
+	if (IsValid(HUDWidgetRef))
+	{
+		if(!HUDWidgetRef->IsInViewport())
+		{
+			HUDWidgetRef->AddToViewport();
 		}
 	}
 }
