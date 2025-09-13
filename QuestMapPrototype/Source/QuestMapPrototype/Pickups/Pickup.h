@@ -67,6 +67,4 @@ public:
 	UFUNCTION()
 	void InitializeQuestMapPlayerController();  
 
-	UFUNCTION()
-	void SetPickupType(EPickupType NewPickupType);
 };

@@ -14,6 +14,7 @@ class QUESTMAPPROTOTYPE_API AHealthPickup : public APickup
 {
 	GENERATED_BODY()
 public:
+
 	AHealthPickup();
 protected:
 	virtual void OnSphereOverlap(

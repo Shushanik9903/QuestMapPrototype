@@ -13,7 +13,9 @@ UCLASS()
 class QUESTMAPPROTOTYPE_API AShieldPickup : public APickup
 {
 	GENERATED_BODY()
-	
+public:
+
+	AShieldPickup() { PickupType = EPickupType::Shield; }
 protected:
 	virtual void OnSphereOverlap(
 		UPrimitiveComponent* OverlappedComponent,

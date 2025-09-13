@@ -9,6 +9,8 @@ AHealthPickup::AHealthPickup()
 {
 	bReplicates = true;
     PrimaryActorTick.bCanEverTick = false;
+
+	PickupType = EPickupType::Health;
 }
 
 void AHealthPickup::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -17,24 +19,23 @@ void AHealthPickup::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AA
 
 	if (!IsValid(OtherActor) && OtherActor == this) return;
 
-    SetPickupType(EPickupType::Health);
     if (AQuestMapPrototypeCharacter* L_Character = Cast<AQuestMapPrototypeCharacter>(OtherActor);IsValid(L_Character))
     {
-    
-        L_Character->GetCharacterMovement()->MaxWalkSpeed = 1000.f;
+       
+		L_Character->GetCharacterMovement()->MaxWalkSpeed = 1000.f;
 
-        L_Character->GetWorldTimerManager().ClearTimer(L_Character->SpeedResetTimer);
+		L_Character->GetWorldTimerManager().ClearTimer(L_Character->SpeedResetTimer);
 
-        L_Character->GetWorldTimerManager().SetTimer(
-            L_Character->SpeedResetTimer,
-            [L_Character]()
-            {
-                if (IsValid(L_Character))
-                {
-                    L_Character->GetCharacterMovement()->MaxWalkSpeed = 500.f;
-                }
-            },
-            10.f, false);
+		L_Character->GetWorldTimerManager().SetTimer(
+			L_Character->SpeedResetTimer,
+			[L_Character]()
+			{
+				if (IsValid(L_Character))
+				{
+					L_Character->GetCharacterMovement()->MaxWalkSpeed = 500.f;
+				}
+			},
+			10.f, false);
     }
 
 }

@@ -9,13 +9,14 @@ void ACoinPickup::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 {
 	Super::OnSphereOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 
-        SetPickupType(EPickupType::Coin);
+
         if (AQuestGameMode* GM = Cast<AQuestGameMode>(GetWorld()->GetAuthGameMode()))
         {
             int32 NewCoinsCollected = GM->GetCoinsCollected() + 1;
             int32 CoinsNeededForShield = GM->GetCoinsThreshold();
 
             GM->SetCoinsCollected(NewCoinsCollected);
+      
 
             if (NewCoinsCollected >= CoinsNeededForShield)
             {
@@ -27,6 +28,8 @@ void ACoinPickup::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 ACoinPickup::ACoinPickup()
 {
 	PrimaryActorTick.bCanEverTick = false;
+
+    PickupType = EPickupType::Coin; 
 }
 
 void ACoinPickup::MoveToLocation(const FVector& NewLocation)

@@ -13,7 +13,10 @@ UCLASS()
 class QUESTMAPPROTOTYPE_API ACoinPickup : public APickup
 {
 	GENERATED_BODY()
-	
+
+public:
+	ACoinPickup();
+
 protected:
 	virtual void OnSphereOverlap(
 		UPrimitiveComponent* OverlappedComponent,
@@ -25,7 +28,6 @@ protected:
 	) override;
 
 public:
-	ACoinPickup();
 
 	UFUNCTION()
 	void MoveToLocation(const FVector& NewLocation);
