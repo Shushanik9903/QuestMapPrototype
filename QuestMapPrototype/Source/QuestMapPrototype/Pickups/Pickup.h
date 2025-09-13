@@ -55,4 +55,10 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sprite")
 	TObjectPtr<class UPaperSpriteComponent> Icon;
+
+	UFUNCTION(BlueprintCallable)
+	void ShowIcon(bool bshow);
+
+	UFUNCTION()
+	void InitializeQuestMapPlayerController();  
 };

@@ -14,5 +14,13 @@ UCLASS()
 class QUESTMAPPROTOTYPE_API AQuestMapPlayerController : public APlayerController
 {
 	GENERATED_BODY()
+
+public:
+
+	UFUNCTION(BlueprintCallable)
+	void ShowAllPickupIcons(bool bShow);
+
+	UPROPERTY()
+	TObjectPtr<class APickup> Pickup = nullptr;
 	
 };

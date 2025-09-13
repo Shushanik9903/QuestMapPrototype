@@ -8,6 +8,7 @@
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "../Plugins/2D/Paper2D/Source/Paper2D/Classes/PaperSpriteComponent.h"
+#include "QuestMapPrototype/Game/Controller/QuestMapPlayerController.h"
 
 APickup::APickup()
 {
@@ -56,6 +57,9 @@ void APickup::BeginPlay()
 			&APickup::BindOverlapTimerFinished,
 			BindOverlapTime
 		);
+
+		Icon->SetHiddenInGame(true);
+		InitializeQuestMapPlayerController();
 	}
 }
 
@@ -102,3 +106,18 @@ void APickup::Destroyed()
 	}
 }
 
+void APickup::ShowIcon(bool bshow)
+{
+	Icon->SetHiddenInGame(!bshow);
+}
+
+void APickup::InitializeQuestMapPlayerController()
+{
+	if (APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);IsValid(PC))
+	{
+		if (AQuestMapPlayerController* QuestPC = Cast<AQuestMapPlayerController>(PC);IsValid(QuestPC))
+		{
+			QuestPC->Pickup = this;
+		}
+	}
+}
