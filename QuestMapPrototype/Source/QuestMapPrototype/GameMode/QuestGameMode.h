@@ -20,7 +20,7 @@ private:
 	UPROPERTY()
 	int32 CoinsCollected = 0; 
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	int32 CoinsThreshold = 2;
 
 public:
