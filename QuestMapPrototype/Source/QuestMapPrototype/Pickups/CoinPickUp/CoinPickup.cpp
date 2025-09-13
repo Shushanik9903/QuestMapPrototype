@@ -9,7 +9,7 @@ void ACoinPickup::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 {
 	Super::OnSphereOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 
-    
+        SetPickupType(EPickupType::Coin);
         if (AQuestGameMode* GM = Cast<AQuestGameMode>(GetWorld()->GetAuthGameMode()))
         {
             int32 NewCoinsCollected = GM->GetCoinsCollected() + 1;
@@ -22,8 +22,6 @@ void ACoinPickup::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AAct
                 GM->OnShieldSpawn.Broadcast(GetActorLocation());
             }
         }
-
-	Destroy();
 }
 
 ACoinPickup::ACoinPickup()

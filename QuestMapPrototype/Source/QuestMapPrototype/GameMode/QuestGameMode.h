@@ -9,6 +9,24 @@
 /**
  * 
  */
+ 
+ UENUM(BlueprintType)
+enum class EPickupType : uint8
+{
+    None,
+    Coin,
+    Shield,
+    Health
+};
+
+USTRUCT(BlueprintType)
+struct FPickupStats
+{
+    GENERATED_BODY()
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+    int32 Count = 0;
+};
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnShieldSpawn, FVector, SpawnLocation);
 UCLASS()
@@ -31,4 +49,12 @@ public:
 	FORCEINLINE	void SetCoinsCollected(int32 NewCoinsCollected)  { CoinsCollected = NewCoinsCollected;}
 	FORCEINLINE int32 GetCoinsCollected() const {return CoinsCollected;}
 	FORCEINLINE int32 GetCoinsThreshold() const {return CoinsThreshold;}
+
+	UFUNCTION(BlueprintCallable, Category="Pickups")
+	void RegisterPickup(EPickupType PickupType);
+
+public:
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Pickups")
+    TMap<EPickupType, FPickupStats> PickupStats;
 };

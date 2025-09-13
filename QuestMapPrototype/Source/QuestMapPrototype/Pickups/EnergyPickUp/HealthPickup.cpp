@@ -17,9 +17,10 @@ void AHealthPickup::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AA
 
 	if (!IsValid(OtherActor) && OtherActor == this) return;
 
+    SetPickupType(EPickupType::Health);
     if (AQuestMapPrototypeCharacter* L_Character = Cast<AQuestMapPrototypeCharacter>(OtherActor);IsValid(L_Character))
     {
-       
+    
         L_Character->GetCharacterMovement()->MaxWalkSpeed = 1000.f;
 
         L_Character->GetWorldTimerManager().ClearTimer(L_Character->SpeedResetTimer);
@@ -34,8 +35,6 @@ void AHealthPickup::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AA
                 }
             },
             10.f, false);
-
-        Destroy();
     }
 
 }

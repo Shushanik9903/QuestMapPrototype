@@ -65,7 +65,11 @@ void APickup::BeginPlay()
 
 void APickup::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-
+	if (AQuestGameMode* GM = Cast<AQuestGameMode>(GetWorld()->GetAuthGameMode()))
+	{
+		GM->RegisterPickup(PickupType);
+		Destroy();
+	}
 }
 
 void APickup::BindOverlapTimerFinished()
@@ -120,4 +124,9 @@ void APickup::InitializeQuestMapPlayerController()
 			QuestPC->Pickup = this;
 		}
 	}
+}
+
+void APickup::SetPickupType(EPickupType NewPickupType)
+{
+	PickupType = NewPickupType;
 }

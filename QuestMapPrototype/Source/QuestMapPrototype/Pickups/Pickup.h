@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "QuestMapPrototype/GameMode/QuestGameMode.h"
 #include "Pickup.generated.h"
+
 
 UCLASS()
 class QUESTMAPPROTOTYPE_API APickup : public AActor
@@ -30,6 +32,9 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	float BaseTurnRate = 45.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
+	EPickupType PickupType = EPickupType::None;
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Pickup")
@@ -61,4 +66,7 @@ public:
 
 	UFUNCTION()
 	void InitializeQuestMapPlayerController();  
+
+	UFUNCTION()
+	void SetPickupType(EPickupType NewPickupType);
 };
