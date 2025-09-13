@@ -30,6 +30,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UInputMappingContext* InputContext = nullptr;
 
+public:
 	UFUNCTION()
 	void ShowMapWidget();
 
@@ -45,7 +46,23 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ShowAllPickupIcons(bool bShow);
 
+	UFUNCTION(BlueprintCallable)
+
+	void SetCamera(class ACameraActor* NewCamera);
+
+	UFUNCTION()
+	void SetQuestMapCharacter();
+
+	UFUNCTION()
+	void ReturnToCharacterView();
+
+public:
 	UPROPERTY()
-	TObjectPtr<class APickup> Pickup = nullptr;
+	TObjectPtr<class APickup> Pickup = nullptr; 
+
+
+	TObjectPtr<class ACameraActor> Camera = nullptr;
 	
+	UPROPERTY()
+	TObjectPtr<class AQuestMapPrototypeCharacter> QuestMapPrototypeCharacter = nullptr;
 };
