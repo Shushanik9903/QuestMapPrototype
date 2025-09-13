@@ -32,25 +32,27 @@ protected:
 	float BaseTurnRate = 45.f;
 
 private:
+	UPROPERTY(EditAnywhere, Category = "Pickup")
+	TObjectPtr<class USphereComponent> OverlapSphere;
 
-	UPROPERTY(EditAnywhere)
-	class USphereComponent* OverlapSphere;
+	UPROPERTY(EditAnywhere, Category = "Pickup")
+	TObjectPtr<class USoundCue> PickupSound;
 
-	UPROPERTY(EditAnywhere)
-	class USoundCue* PickupSound;
+	UPROPERTY(EditAnywhere, Category = "Pickup")
+	TObjectPtr<class UStaticMeshComponent> PickupMesh;
 
-	UPROPERTY(EditAnywhere)
-	UStaticMeshComponent* PickupMesh;
+	UPROPERTY(VisibleAnywhere, Category = "Pickup")
+	TObjectPtr<class UNiagaraComponent> PickupEffectComponent;
 
-	UPROPERTY(VisibleAnywhere)
-	class UNiagaraComponent* PickupEffectComponent;
-
-	UPROPERTY(EditAnywhere)
-	class UNiagaraSystem* PickupEffect;
+	UPROPERTY(EditAnywhere, Category = "Pickup")
+	TObjectPtr<class UNiagaraSystem> PickupEffect;
 
 	FTimerHandle BindOverlapTimer;
 	float BindOverlapTime = 0.25f;
 	void BindOverlapTimerFinished();
 
+public:
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sprite")
+	TObjectPtr<class UPaperSpriteComponent> Icon;
 };

@@ -7,14 +7,18 @@
 #include "Components/SphereComponent.h"
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
+#include "../Plugins/2D/Paper2D/Source/Paper2D/Classes/PaperSpriteComponent.h"
+
 APickup::APickup()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	bReplicates = true;
 
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
+	checkf(RootComponent != nullptr, TEXT("RootComponent is nullptr"));
 
 	OverlapSphere = CreateDefaultSubobject<USphereComponent>(TEXT("OverlapSphere"));
+	checkf(OverlapSphere != nullptr, TEXT("OverlapSphere is nullptr"));
 	OverlapSphere->SetupAttachment(RootComponent);
 	OverlapSphere->SetSphereRadius(150.f);
 	OverlapSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
@@ -23,6 +27,7 @@ APickup::APickup()
 	OverlapSphere->AddLocalOffset(FVector(0.f, 0.f, 85.f));
 
 	PickupMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PickupMesh"));
+	checkf(PickupMesh != nullptr, TEXT("PickupMesh is nullptr")); 
 	PickupMesh->SetupAttachment(OverlapSphere);
 	PickupMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	PickupMesh->SetRelativeScale3D(FVector(5.f, 5.f, 5.f));
@@ -30,7 +35,13 @@ APickup::APickup()
 	PickupMesh->SetCustomDepthStencilValue(250);
 
 	PickupEffectComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("PickupEffectComponent"));
+	checkf(PickupEffectComponent != nullptr, TEXT("PickupEffectComponent is nullptr"));
 	PickupEffectComponent->SetupAttachment(RootComponent);
+
+	Icon = CreateDefaultSubobject<UPaperSpriteComponent>(TEXT("Icon"));
+	checkf(Icon != nullptr, TEXT("The Icon is nullptr"));
+	Icon->SetupAttachment(RootComponent);
+
 }
 
 void APickup::BeginPlay()
