@@ -34,6 +34,13 @@ class QUESTMAPPROTOTYPE_API AQuestHUD : public AHUD
 	TObjectPtr<class UUserWidget> HUDWidgetRef = nullptr;
 	
 	virtual void BeginPlay() override;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = true))
+	TSubclassOf<class UUserWidget> VictoryWidgetSubClass = nullptr;
+	
+	UPROPERTY()
+	TObjectPtr<class UVictoryUserWidget> VictoryWidgetRef = nullptr;
+	
 public:	
 	UFUNCTION()
 	void ShowMapWidget();
@@ -43,5 +50,8 @@ public:
 
 	UFUNCTION()
 	void ShowHUDWidget();
+	
+	UFUNCTION(BlueprintCallable)
+	void ShowVictoryWidget(bool bIsWin);
 	
 };

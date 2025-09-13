@@ -6,6 +6,7 @@
 #include "QuestMapPrototype/Game/Controller/QuestMapPlayerController.h"
 #include "QuestMapPrototype/UI/FullMap/FullMapUserWidget.h"
 #include "QuestMapPrototype/UI/Journal/JournalUserWidget.h"
+#include "QuestMapPrototype/UI/VictoryWidget/VictoryUserWidget.h"
 
 
 void AQuestHUD::BeginPlay()
@@ -107,4 +108,28 @@ void AQuestHUD::ShowHUDWidget()
 			HUDWidgetRef->AddToViewport();
 		}
 	}
+}
+
+void AQuestHUD::ShowVictoryWidget(bool bIsWin)
+{
+	AQuestMapPlayerController* PC = Cast<AQuestMapPlayerController>(GetOwningPlayerController()); 
+	if (!IsValid(PC))
+	{
+		return;
+	}
+	if(!IsValid(VictoryWidgetRef))
+	{
+		if(IsValid(VictoryWidgetSubClass))
+		{
+			VictoryWidgetRef = CreateWidget<UVictoryUserWidget>(PC, VictoryWidgetSubClass);
+		}
+	}
+	if (IsValid(VictoryWidgetRef))
+	{
+		if(!VictoryWidgetRef->IsInViewport())
+		{
+			VictoryWidgetRef->AddToViewport();
+			VictoryWidgetRef->SetVictoryStatus(bIsWin);
+		}
+	}	
 }
