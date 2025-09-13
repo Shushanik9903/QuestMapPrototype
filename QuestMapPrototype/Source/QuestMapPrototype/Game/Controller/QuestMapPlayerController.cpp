@@ -41,6 +41,7 @@ void AQuestMapPlayerController::SetupInputComponent()
                        EnhancedInputComp->ClearActionValueBindings();
 
                        EnhancedInputComp->BindAction(ShowMapAction, ETriggerEvent::Started, this, &AQuestMapPlayerController::ShowMapWidget);
+                       EnhancedInputComp->BindAction(ShowMapAction, ETriggerEvent::Completed, this, &AQuestMapPlayerController::ShowMapWidget);
                        EnhancedInputComp->BindAction(ShowJournalAction, ETriggerEvent::Started, this, &AQuestMapPlayerController::ShowJournalWidget);
                }
        }
