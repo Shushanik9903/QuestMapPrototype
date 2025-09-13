@@ -1,8 +1,8 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "QuestHUD.h"
-
+#include "QuestMapPrototype/GameMode/QuestGameMode.h"
 #include "QuestMapPrototype/Game/Controller/QuestMapPlayerController.h"
 #include "QuestMapPrototype/UI/FullMap/FullMapUserWidget.h"
 #include "QuestMapPrototype/UI/Journal/JournalUserWidget.h"

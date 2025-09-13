@@ -53,5 +53,4 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void ShowVictoryWidget(bool bIsWin);
-	
 };

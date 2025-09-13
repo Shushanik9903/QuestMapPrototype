@@ -3,6 +3,7 @@
 
 #include "ShieldSpawner.h"
 #include "Kismet/GameplayStatics.h"
+#include "QuestMapPrototype/HUD/QuestHUD.h"
 #include "QuestMapPrototype/GameMode/QuestGameMode.h"
 #include "QuestMapPrototype/Pickups/CoinPickUp/CoinPickup.h"
 #include "QuestMapPrototype/Pickups/ShieldPickUp/ShieldPickup.h"
@@ -21,7 +22,6 @@ void AShieldSpawner::BeginPlay()
 
     if (HasAuthority())
     {
-
         if (AQuestGameMode* GM = Cast<AQuestGameMode>(GetWorld()->GetAuthGameMode()))
         {
             GM->OnShieldSpawn.AddDynamic(this, &AShieldSpawner::SpawnShield);

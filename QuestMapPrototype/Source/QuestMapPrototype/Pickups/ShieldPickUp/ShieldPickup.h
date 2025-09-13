@@ -25,6 +25,8 @@ protected:
 		bool bFromSweep,
 		const FHitResult& SweepResult
 	) override;
+
+	virtual void BeginPlay() override;
 private:
 
 	UPROPERTY(EditAnywhere)
@@ -32,4 +34,8 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	float ShieldReplenishTime = 5.f;
+
+public:
+	UFUNCTION()
+	void HandleShieldSpawn();
 };
