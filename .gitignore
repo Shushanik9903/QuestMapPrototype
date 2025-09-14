@@ -110,3 +110,6 @@ SourceArt/**/*.tga
 !Build/*/
 Build/**/*
 !Build/*/PakBlacklist*.txt
+
+# Allow Landscape Layer Info assets to be tracked
+!Content/**/LayerInfo/*.uasset
