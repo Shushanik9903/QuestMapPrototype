@@ -14,26 +14,23 @@ void UGoalItemUserWidget::SetTextPropertyValue(UTextBlock* TextB, const FString&
 	}
 }
 
-void UGoalItemUserWidget::UpdateProperties(const FMapQuestGoal& Goal)
+void UGoalItemUserWidget::UpdateProperties(const EPickupType Type, const FPickupStats& Stats)
 {
-	if (StaticEnum<EPickupType>())
-	{
-		const FString NameString = StaticEnum<EPickupType>()->GetNameStringByValue((int64)Goal.PickupType);
-		const FString Display = FName::NameToDisplayString(NameString, true);
-		SetTextPropertyValue(TextType, Display);
-	}
-	else
-	{
-		SetTextPropertyValue(TextType, TEXT("Unknown"));
-	}
+	PickupType = Type;
 
-	const FString Info = FString::FromInt(Goal.CollectedCount) + TEXT("/") + FString::FromInt(Goal.MaxCount);
+	const FString TypeString = UEnum::GetValueAsName(Type).ToString();
+	FString LeftStr, RightStr;
+	TypeString.Split("::", &LeftStr, &RightStr);
+	const FString L_Status = FName::NameToDisplayString(RightStr, true);
+	SetTextPropertyValue(TextType, L_Status);
+
+	const FString Info = FString::FromInt(Stats.Count) + TEXT("/") + FString::FromInt(Stats.Threshold);
 	SetTextPropertyValue(TextInfo, Info);
 
 	if (IsValid(Status))
 	{
-		const FLinearColor DynamicColor = FColor::Green;
-		const FLinearColor StaticColor = FColor::FromHex("FF6434"); 
-		Status->SetColorAndOpacity(Goal.bIsDynamic ? DynamicColor : StaticColor);
+		const FLinearColor DynamicColor = FLinearColor::Green;
+		const FLinearColor StaticColor = FLinearColor(1.f, 0.39f, 0.2f);
+		Status->SetColorAndOpacity(Stats.bIsDynamic ? DynamicColor : StaticColor);
 	}
 }

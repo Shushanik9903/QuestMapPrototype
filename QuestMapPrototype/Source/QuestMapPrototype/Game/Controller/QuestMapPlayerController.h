@@ -56,6 +56,8 @@ public:
 	UFUNCTION()
 	void ReturnToCharacterView();
 
+	UFUNCTION(Server, Reliable)
+	void Server_RequestAddMapGoal(EPickupType Type, const FPickupStats& Goal);
 public:
 	UPROPERTY()
 	TObjectPtr<class APickup> Pickup = nullptr; 

@@ -3,6 +3,7 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "GoalItem/GoalItemUserWidget.h"
 #include "QuestMapPrototype/GameMode/QuestGameMode.h"
 #include "JournalUserWidget.generated.h"
 
@@ -27,19 +28,7 @@ class QUESTMAPPROTOTYPE_API UJournalUserWidget : public UUserWidget
 	TObjectPtr<class UTextBlock> TextAdditionalGoal = nullptr;
 
 	UPROPERTY(BlueprintReadOnly, Transient, meta=(BindWidget, AllowPrivateAccess = true))
-	TObjectPtr<class UTextBlock> TextStartGame = nullptr;
-
-	UPROPERTY(BlueprintReadOnly, Transient, meta=(BindWidget, AllowPrivateAccess = true))
-	TObjectPtr<class UTextBlock> TextRemoveGoal  = nullptr;
-
-	UPROPERTY(BlueprintReadOnly, Transient, meta=(BindWidget, AllowPrivateAccess = true))
 	TObjectPtr<class UButton> ButtonAdditionalGoal = nullptr;
-
-	UPROPERTY(BlueprintReadOnly, Transient, meta=(BindWidget, AllowPrivateAccess = true))
-	TObjectPtr<class UButton> ButtonRemoveGoal = nullptr;
-
-	UPROPERTY(BlueprintReadOnly, Transient, meta=(BindWidget, AllowPrivateAccess = true))
-	TObjectPtr<class UButton> ButtonStartGame = nullptr;
 
 	UPROPERTY(BlueprintReadOnly, Transient, meta=(BindWidget, AllowPrivateAccess = true))
 	TObjectPtr<class UButton> ButtonLeft = nullptr;
@@ -54,48 +43,42 @@ class QUESTMAPPROTOTYPE_API UJournalUserWidget : public UUserWidget
 	TObjectPtr<class UTextBlock> TextGoalCount = nullptr;
 	
 	UPROPERTY(BlueprintReadOnly, Transient, meta=(BindWidget, AllowPrivateAccess = true))
-	TObjectPtr<class USizeBox> BoxRemoveGoal = nullptr;
-	
-	UPROPERTY(BlueprintReadOnly, Transient, meta=(BindWidget, AllowPrivateAccess = true))
 	TObjectPtr<class UVerticalBox> BoxAdditionalGoal = nullptr;
-	
+
+	UPROPERTY(BlueprintReadOnly, Transient, meta=(BindWidget, AllowPrivateAccess = true))
+	TObjectPtr<class UWidgetSwitcher> WidgetSwitcher = nullptr;
+
 	UFUNCTION()
-	void OnButtonStartHoverStateChanged();
+	void OnPickupStatsUpdated_BP(EPickupType Type, const FPickupStats& Stats);
+
+	UFUNCTION()
+	void AddOrUpdateGoal(EPickupType Type, const FPickupStats& Stats);
+
+	UFUNCTION()
+	void AddGoal(EPickupType Type, const FPickupStats& Stats);
 
 	UFUNCTION()
 	void OnButtonAddGoalClicked();
 
 	UFUNCTION()
-	void OnButtonStartClicked();
-	
-	UFUNCTION()
 	void OnButtonAddGoalHoverStateChanged();
 
 	UFUNCTION()
 	void OnButtonLeftClicked();
-	
+
 	UFUNCTION()
 	void OnButtonRightClicked();
-	
-	UFUNCTION()
-	void OnButtonRemoveHoverStateChanged();
-	
-	UFUNCTION()
-	void OnButtonRemoveGoalClicked();
 
 	UFUNCTION()
 	void OnDynamicStateChanged(bool bIsChecked);
-	
+
 	UFUNCTION()
 	void BindActions();
-
-	FMapQuestGoal AdditionalMapQuestGoal = FMapQuestGoal();
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSubclassOf<class UGoalItemUserWidget> Item = nullptr;
 
-	UFUNCTION()
-	void AddGoals(const FMapQuestGoal& Goal);
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<UGoalItemUserWidget> Item = nullptr;
 	
+	FPickupStats AdditionalMapQuestGoal;
 };
 

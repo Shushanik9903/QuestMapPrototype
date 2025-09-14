@@ -6,17 +6,14 @@
 #include "GameFramework/GameMode.h"
 #include "QuestGameMode.generated.h"
 
-/**
- * 
- */
- 
- UENUM(BlueprintType)
+UENUM(BlueprintType)
 enum class EPickupType : uint8
 {
-    None,
-    Coin,
-    Shield,
-    Health
+    None UMETA(DisplayName="None"),
+    Coin UMETA(DisplayName="Coin"),
+    Shield UMETA(DisplayName="Shield"),
+    Health UMETA(DisplayName="Health"),
+    Star UMETA(DisplayName="Star")
 };
 
 USTRUCT(BlueprintType)
@@ -26,58 +23,68 @@ struct FPickupStats
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
     int32 Count = 0;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+    int32 Threshold = 0;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+    bool bIsDynamic = false;
 };
 
-USTRUCT(BlueprintType)
-struct FMapQuestGoal
-{
-	GENERATED_BODY()
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	EPickupType PickupType = EPickupType::None;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 MaxCount = 0;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 CollectedCount = 0;
-
-	bool bIsDynamic = false;
-
-	bool operator ==(const FMapQuestGoal& NewGoal) const
-	{
-		const bool bPickupType = PickupType == NewGoal.PickupType;
-		const bool bMaxCount = MaxCount == NewGoal.MaxCount;
-		return bPickupType && bMaxCount;
-	}
-};
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnPickupStatsUpdated, EPickupType, PickupType, const FPickupStats&, Stats);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnShieldSpawn, FVector, SpawnLocation);
+
 UCLASS()
 class QUESTMAPPROTOTYPE_API AQuestGameMode : public AGameMode
 {
-	GENERATED_BODY()
-
-private:
-	UPROPERTY()
-	int32 CoinsCollected = 0; 
-
-	UPROPERTY(EditAnywhere)
-	int32 CoinsThreshold = 2;
+    GENERATED_BODY()
 
 public:
-	
-	UPROPERTY(BlueprintAssignable, Category="Events")
+    AQuestGameMode();
+
+    virtual void BeginPlay() override;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickups")
+    int32 ShieldThreshold = 1;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickups")
+    int32 CoinMax = 20;
+
+    UPROPERTY(BlueprintAssignable, Category = "Events")
+    FOnPickupStatsUpdated OnPickupStatsUpdated;
+
+    UPROPERTY(BlueprintAssignable, Category = "Events")
     FOnShieldSpawn OnShieldSpawn;
 
-	FORCEINLINE	void SetCoinsCollected(int32 NewCoinsCollected)  { CoinsCollected = NewCoinsCollected;}
-	FORCEINLINE int32 GetCoinsCollected() const {return CoinsCollected;}
-	FORCEINLINE int32 GetCoinsThreshold() const {return CoinsThreshold;}
+    UFUNCTION(BlueprintCallable, Category = "Pickups")
+    void RegisterPickup(EPickupType PickupType);
 
-	UFUNCTION(BlueprintCallable, Category="Pickups")
-	void RegisterPickup(EPickupType PickupType);
+    UFUNCTION(BlueprintCallable, Category = "Pickups")
+    void AddMapQuestGoal(EPickupType Type, const FPickupStats& Goal);
 
-public:
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Pickups")
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pickups")
     TMap<EPickupType, FPickupStats> PickupStats;
+
+    UPROPERTY()
+    int32 CoinsCollected = 0;
+
+    UPROPERTY(EditAnywhere)
+    int32 CoinsThreshold = 2;
+
+    UFUNCTION(BlueprintCallable, Category = "Pickups")
+    void SetCoinsCollected(int32 NewCoinsCollected);
+
+    FORCEINLINE int32 GetCoinsCollected() const { return CoinsCollected; }
+    FORCEINLINE int32 GetCoinsThreshold() const { return CoinsThreshold; }
+
+protected:
+    void InitializeDefaultPickups();
+    
+    UFUNCTION(NetMulticast, Reliable)
+    void Multicast_PickupStatsUpdated(EPickupType PickupType, const FPickupStats& Stats);
+
+    void Multicast_PickupStatsUpdated_Implementation(EPickupType PickupType, const FPickupStats& Stats);
+
+private:
+    void RegisterPickup_Internal(EPickupType PickupType);
 };

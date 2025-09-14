@@ -65,10 +65,8 @@ void APickup::BeginPlay()
 
 void APickup::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (!OtherActor || PickupType == EPickupType::None) return;
-
-	AQuestGameMode* GM = Cast<AQuestGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	if (GM)
+	if (!HasAuthority() || !OtherActor || PickupType == EPickupType::None) return;
+	if (AQuestGameMode* GM = Cast<AQuestGameMode>(UGameplayStatics::GetGameMode(GetWorld())))
 	{
 		GM->RegisterPickup(PickupType);
 	}
@@ -77,7 +75,10 @@ void APickup::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 
 void APickup::BindOverlapTimerFinished()
 {
-	OverlapSphere->OnComponentBeginOverlap.AddDynamic(this, &APickup::OnSphereOverlap);
+	if (OverlapSphere)
+	{
+		OverlapSphere->OnComponentBeginOverlap.AddDynamic(this, &APickup::OnSphereOverlap);
+	}
 }
 
 void APickup::Tick(float DeltaTime)

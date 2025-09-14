@@ -84,6 +84,14 @@ void AQuestMapPlayerController::ReturnToCharacterView()
     ShowAllPickupIcons(false);
 }
 
+void AQuestMapPlayerController::Server_RequestAddMapGoal_Implementation(EPickupType Type, const FPickupStats& Goal)
+{
+	if (AQuestGameMode* GM = Cast<AQuestGameMode>(UGameplayStatics::GetGameMode(GetWorld())))
+	{
+		GM->AddMapQuestGoal(Type, Goal);
+	}
+}
+
 void AQuestMapPlayerController::ShowJournalWidget()
 {
 	AQuestHUD* QuestHUD = GetHUD<AQuestHUD>();
