@@ -53,4 +53,8 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void ShowVictoryWidget(bool bIsWin);
+
+public:
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	bool IsEnd = false;
 };

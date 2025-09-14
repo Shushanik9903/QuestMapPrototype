@@ -122,6 +122,8 @@ void AQuestHUD::ShowVictoryWidget(bool bIsWin)
 		if(IsValid(VictoryWidgetSubClass))
 		{
 			VictoryWidgetRef = CreateWidget<UVictoryUserWidget>(PC, VictoryWidgetSubClass);
+
+			IsEnd = bIsWin;
 		}
 	}
 	if (IsValid(VictoryWidgetRef))
