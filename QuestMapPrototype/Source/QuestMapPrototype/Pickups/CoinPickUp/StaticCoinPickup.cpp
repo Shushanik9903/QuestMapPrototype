@@ -8,7 +8,7 @@ AStaticCoinPickup::AStaticCoinPickup()
 {
     PrimaryActorTick.bCanEverTick = false;
 
-    PickupType = EPickupType::Coin;
+    //PickupType = EPickupType::Coin;
 }
 
 void AStaticCoinPickup::BeginPlay()

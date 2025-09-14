@@ -8,6 +8,7 @@
 #include "Engine/StaticMeshActor.h"
 #include "QuestMapPrototype/GameInstance/QuestGameInstance.h"
 #include "QuestMapPrototype/Pickups/CoinPickUp/CoinPickup.h"
+#include "QuestMapPrototype/Pickups/CoinPickUp/StaticCoinPickup.h"
 
 
 DEFINE_LOG_CATEGORY_STATIC(LogSpawnManager, Log, All);
@@ -23,6 +24,7 @@ void ASpawnManager::BeginPlay()
     GatherHousesAndSpawnCoins();
     GatherBarrelsAndSpawnEnergy();
     SpawnCoins();
+    SpawnStaticCoins();
     SpawnEnergy();
     if (RelocateInterval > 0.f)
     {
@@ -172,7 +174,7 @@ void ASpawnManager::SpawnCoins()
     for (int32 i = 0; i < CoinCount; ++i)
     {
         FVector Loc = ChooseValidSpawnLocationFromArray(reinterpret_cast<const TArray<FSpawnPointBase>&>(SpawnPointsForCoins),
-            reinterpret_cast<const TArray<AActor*>&>(SpawnedCoins)); // safe-ish cast for location checking
+            reinterpret_cast<const TArray<AActor*>&>(SpawnedCoins)); 
 
         FActorSpawnParameters Params;
         Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
@@ -180,6 +182,29 @@ void ASpawnManager::SpawnCoins()
         if (NewCoin)
         {
             SpawnedCoins.Add(NewCoin);
+        }
+    }
+}
+
+void ASpawnManager::SpawnStaticCoins()
+{
+    SpawnedStaticCoins.Empty();
+    UQuestGameInstance* GI = Cast<UQuestGameInstance>(GetGameInstance());
+    if (!GI) return;
+    int32 CoinCount = GI->CoinCount;
+    if (CoinCount <= 0 || SpawnPointsForCoins.Num() == 0 || !CoinClass) return;
+
+    for (int32 i = 0; i < CoinCount; ++i)
+    {
+        FVector Loc = ChooseValidSpawnLocationFromArray(reinterpret_cast<const TArray<FSpawnPointBase>&>(SpawnPointsForCoins),
+            reinterpret_cast<const TArray<AActor*>&>(SpawnedStaticCoins));
+
+        FActorSpawnParameters Params;
+        Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+        AStaticCoinPickup* NewCoin = GetWorld()->SpawnActor<AStaticCoinPickup>(StaticCoinClass, Loc, FRotator::ZeroRotator, Params);
+        if (NewCoin)
+        {
+            SpawnedStaticCoins.Add(NewCoin);
         }
     }
 }

@@ -5,11 +5,12 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "QuestMapPrototype/GameMode/QuestGameMode.h"
+#include "QuestMapPrototype/Interface/PickupIconInterface.h"
 #include "Pickup.generated.h"
 
 
 UCLASS()
-class QUESTMAPPROTOTYPE_API APickup : public AActor
+class QUESTMAPPROTOTYPE_API APickup : public AActor, public IPickupIconInterface
 {
 	GENERATED_BODY()
 	
@@ -61,10 +62,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sprite")
 	TObjectPtr<class UPaperSpriteComponent> Icon;
 
-	UFUNCTION(BlueprintCallable)
-	void ShowIcon(bool bshow);
-
 	UFUNCTION()
 	void InitializeQuestMapPlayerController();  
 
+public:
+	virtual void ShowIcon(bool bShow) override;
 };

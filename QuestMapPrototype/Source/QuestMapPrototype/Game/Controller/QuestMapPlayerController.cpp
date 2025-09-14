@@ -8,18 +8,21 @@
 #include "EnhancedInputSubsystems.h"
 #include "QuestMapPrototype/HUD/QuestHUD.h"
 #include "QuestMapPrototype/Pickups/Pickup.h"
+#include "QuestMapPrototype/Pickups/StarPickUp.h"
 #include "QuestMapPrototype/QuestMapPrototypeCharacter.h"
+#include "QuestMapPrototype/Interface/PickupIconInterface.h"
 
 void AQuestMapPlayerController::ShowAllPickupIcons(bool bShow)
 {
-    TArray<AActor*> FoundCoins;
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(), APickup::StaticClass(), FoundCoins);
+    TArray<AActor*> FoundActors;
+    
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), FoundActors);
 
-    for (AActor* Actor : FoundCoins)
+    for (AActor* Actor : FoundActors)
     {
-        if (APickup* PickupActor = Cast<APickup>(Actor))
+        if (IPickupIconInterface* PickupInterface = Cast<IPickupIconInterface>(Actor))
         {
-            PickupActor->ShowIcon(bShow);
+            PickupInterface->ShowIcon(bShow);
         }
     }
 }

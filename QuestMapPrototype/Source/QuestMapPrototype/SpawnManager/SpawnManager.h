@@ -9,9 +9,6 @@
 #include "SpawnManager.generated.h"
 
 
-class ACoinPickup;
-class AHealthPickup;
-
 USTRUCT()
 struct FSpawnPointBase
 {
@@ -48,6 +45,7 @@ protected:
     FVector FindNearCenterLocation(const AActor* LActor) const;
     bool GetLandscapeHitBelow(const FVector& Start, FVector& OutHitLocation, AActor*& OutHitActor) const;
     void SpawnCoins();
+    void SpawnStaticCoins();
     void SpawnEnergy();
     void OnRelocateTick();
     FVector ChooseValidSpawnLocationFromArray(const TArray<FSpawnPointBase>& Points, const TArray<AActor*>& ExistingActors) const;
@@ -59,15 +57,21 @@ protected:
     TArray<FSpawnEnergyPoint> SpawnPointsForEnergy;
 
     UPROPERTY()
-    TArray<ACoinPickup*> SpawnedCoins;
+	TArray<class ACoinPickup*> SpawnedCoins; 
 
     UPROPERTY()
-    TArray<AHealthPickup*> SpawnedEnergy;
+	TArray<class AStaticCoinPickup*> SpawnedStaticCoins;
+
+    UPROPERTY()
+    TArray<class AHealthPickup*> SpawnedEnergy;
 
     FTimerHandle RelocateTimerHandle;
     
     UPROPERTY(EditAnywhere, Category="Spawn")
-    TSubclassOf<ACoinPickup> CoinClass;
+	TSubclassOf<ACoinPickup> CoinClass; 
+
+    UPROPERTY(EditAnywhere, Category = "Spawn")
+	TSubclassOf<class AStaticCoinPickup> StaticCoinClass;
 
     UPROPERTY(EditAnywhere, Category="Spawn")
     TSubclassOf<AHealthPickup> EnergyClass;

@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "../Pickup.h"
+#include "../StarPickUp.h"
 #include "StaticCoinPickup.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class QUESTMAPPROTOTYPE_API AStaticCoinPickup : public APickup
+class QUESTMAPPROTOTYPE_API AStaticCoinPickup : public AStarPickUp
 {
 	GENERATED_BODY()
 
