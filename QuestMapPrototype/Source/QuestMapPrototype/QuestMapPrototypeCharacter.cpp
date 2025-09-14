@@ -115,7 +115,6 @@ void AQuestMapPrototypeCharacter::Move(const FInputActionValue& Value)
 		AddMovementInput(RightDirection, MovementVector.X);
 	}
 
-	// ստուգում ենք արդյոք input կա
 	if (!MovementVector.IsNearlyZero())
 	{
 		if (!FootstepAudioComponent->IsPlaying())
