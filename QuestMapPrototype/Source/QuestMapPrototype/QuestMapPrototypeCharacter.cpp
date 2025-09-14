@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+﻿// Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "QuestMapPrototypeCharacter.h"
 #include "Engine/LocalPlayer.h"
@@ -10,6 +10,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "Components/AudioComponent.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -52,6 +53,11 @@ AQuestMapPrototypeCharacter::AQuestMapPrototypeCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+
+	FootstepAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("FootstepAudio"));
+	checkf(FootstepAudioComponent != nullptr, TEXT("The FootstepAudioComponent is nullptr"));
+	FootstepAudioComponent->SetupAttachment(RootComponent);
+	FootstepAudioComponent->bAutoActivate = false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -94,25 +100,36 @@ void AQuestMapPrototypeCharacter::SetupPlayerInputComponent(UInputComponent* Pla
 
 void AQuestMapPrototypeCharacter::Move(const FInputActionValue& Value)
 {
-	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
 	if (Controller != nullptr)
 	{
-		// find out which way is forward
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
 
-		// get forward vector
 		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-	
-		// get right vector 
 		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
-		// add movement 
 		AddMovementInput(ForwardDirection, MovementVector.Y);
 		AddMovementInput(RightDirection, MovementVector.X);
 	}
+
+	// ստուգում ենք արդյոք input կա
+	if (!MovementVector.IsNearlyZero())
+	{
+		if (!FootstepAudioComponent->IsPlaying())
+		{
+			FootstepAudioComponent->Play();
+		}
+	}
+	else
+	{
+		if (FootstepAudioComponent->IsPlaying())
+		{
+			FootstepAudioComponent->Stop();
+		}
+	}
+
 }
 
 void AQuestMapPrototypeCharacter::Look(const FInputActionValue& Value)

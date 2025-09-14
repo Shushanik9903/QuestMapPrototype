@@ -75,5 +75,8 @@ public:
 public:
 
 	FTimerHandle SpeedResetTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Audio")
+	TObjectPtr<class UAudioComponent> FootstepAudioComponent = nullptr;
 };
 
