@@ -4,6 +4,8 @@
 #include "JournalUserWidget.h"
 
 #include "Components/Button.h"
+#include "Components/CheckBox.h"
+#include "Components/SizeBox.h"
 #include "Components/TextBlock.h"
 #include "Components/UniformGridPanel.h"
 #include "Components/UniformGridSlot.h"
@@ -14,9 +16,19 @@ void UJournalUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 	BindActions();
+	AdditionalMapQuestGoal = FMapQuestGoal();
 	if (!IsValid(GridPanel))
 	{
 		GridPanel->ClearChildren();
+	}
+	//TODo Gevor read data from gamemode and add it to grid call AddGoals
+	if (IsValid(BoxRemoveGoal))
+	{
+		BoxRemoveGoal->SetVisibility(ESlateVisibility::Collapsed);
+	}
+	if (IsValid(BoxAdditionalGoal))
+	{
+		BoxAdditionalGoal->SetVisibility(ESlateVisibility::Collapsed);
 	}
 	FMapQuestGoal CoinGoal;
 	CoinGoal.MaxCount = 20;
@@ -82,12 +94,26 @@ void UJournalUserWidget::OnButtonStartHoverStateChanged()
 
 void UJournalUserWidget::OnButtonAddGoalClicked()
 {
+	if (AdditionalMapQuestGoal.MaxCount > 0 )
+	{
+		ButtonAdditionalGoal->SetVisibility(ESlateVisibility::Hidden);
+		BoxAdditionalGoal->SetVisibility(ESlateVisibility::Collapsed);
+		BoxRemoveGoal->SetVisibility(ESlateVisibility::Collapsed);
+		return;
+	}
+	if (IsValid(BoxAdditionalGoal) && IsValid(BoxRemoveGoal))
+	{
+		BoxAdditionalGoal->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		BoxRemoveGoal->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	}
 }
 
 void UJournalUserWidget::OnButtonStartClicked()
 {
 	RemoveFromParent();
-	//TODO
+
+	
+	//TODO Gevor brodcast to start countdown in GenericHUD
 }
 
 void UJournalUserWidget::OnButtonAddGoalHoverStateChanged()
@@ -99,8 +125,79 @@ void UJournalUserWidget::OnButtonAddGoalHoverStateChanged()
 	}
 }
 
+void UJournalUserWidget::OnButtonLeftClicked()
+{
+	AdditionalMapQuestGoal.MaxCount--;
+	if(!IsValid(TextGoalCount))
+	{
+		return;
+	}
+	bool bEnable = AdditionalMapQuestGoal.MaxCount > 0;
+	if (ButtonLeft->GetIsEnabled() != bEnable)
+	{
+		ButtonLeft->SetIsEnabled(bEnable);
+	}
+	TextGoalCount->SetText(FText::FromString(FString::FromInt(AdditionalMapQuestGoal.MaxCount)));
+}
+
+void UJournalUserWidget::OnButtonRightClicked()
+{
+	AdditionalMapQuestGoal.MaxCount++;
+	if(!IsValid(TextGoalCount))
+	{
+		return;
+	}
+	const bool bEnable = AdditionalMapQuestGoal.MaxCount> 0;
+	if (ButtonLeft->GetIsEnabled() != bEnable)
+	{
+		ButtonLeft->SetIsEnabled(bEnable);
+	}
+	TextGoalCount->SetText(FText::FromString(FString::FromInt(AdditionalMapQuestGoal.MaxCount)));
+}
+
+void UJournalUserWidget::OnButtonRemoveHoverStateChanged()
+{
+	if (IsValid(ButtonRemoveGoal) && IsValid(TextRemoveGoal))
+	{
+		FColor Color = ButtonRemoveGoal->IsHovered() ? FColor::Red : FColor::FromHex("FF2009FF");
+		TextAdditionalGoal->SetColorAndOpacity(Color);
+	}
+}
+
+void UJournalUserWidget::OnButtonRemoveGoalClicked()
+{
+	if (IsValid(BoxAdditionalGoal) && IsValid(BoxRemoveGoal))
+	{
+		BoxAdditionalGoal->SetVisibility(ESlateVisibility::Collapsed);
+		BoxRemoveGoal->SetVisibility(ESlateVisibility::Collapsed);
+	}
+}
+
+void UJournalUserWidget::OnDynamicStateChanged(bool bIsChecked)
+{
+	AdditionalMapQuestGoal.bIsDynamic = bIsChecked;
+}
+
 void UJournalUserWidget::BindActions()
 {
+	if (IsValid(DynamicCheck))
+	{
+		DynamicCheck->OnCheckStateChanged.AddUniqueDynamic(this, &ThisClass::OnDynamicStateChanged);
+	}
+	if(IsValid(ButtonLeft))
+	{
+		ButtonLeft->OnClicked.AddUniqueDynamic(this, &ThisClass::OnButtonLeftClicked);
+	}
+	if(IsValid(ButtonRight))
+	{
+		ButtonRight->OnClicked.AddUniqueDynamic(this, &ThisClass::OnButtonRightClicked);
+	}
+	if(IsValid(ButtonRemoveGoal))
+	{
+		ButtonRemoveGoal->OnClicked.AddUniqueDynamic(this, &ThisClass::OnButtonRemoveGoalClicked);
+		ButtonRemoveGoal->OnHovered.AddUniqueDynamic(this, &ThisClass::OnButtonRemoveHoverStateChanged);
+		ButtonRemoveGoal->OnUnhovered.AddUniqueDynamic(this, &ThisClass::OnButtonRemoveHoverStateChanged);
+	}
 	if(IsValid(ButtonStartGame))
 	{
 		ButtonStartGame->OnClicked.AddUniqueDynamic(this, &ThisClass::OnButtonStartClicked);

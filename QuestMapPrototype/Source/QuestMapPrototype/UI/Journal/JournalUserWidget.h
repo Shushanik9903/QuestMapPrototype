@@ -30,11 +30,35 @@ class QUESTMAPPROTOTYPE_API UJournalUserWidget : public UUserWidget
 	TObjectPtr<class UTextBlock> TextStartGame = nullptr;
 
 	UPROPERTY(BlueprintReadOnly, Transient, meta=(BindWidget, AllowPrivateAccess = true))
+	TObjectPtr<class UTextBlock> TextRemoveGoal  = nullptr;
+
+	UPROPERTY(BlueprintReadOnly, Transient, meta=(BindWidget, AllowPrivateAccess = true))
 	TObjectPtr<class UButton> ButtonAdditionalGoal = nullptr;
+
+	UPROPERTY(BlueprintReadOnly, Transient, meta=(BindWidget, AllowPrivateAccess = true))
+	TObjectPtr<class UButton> ButtonRemoveGoal = nullptr;
 
 	UPROPERTY(BlueprintReadOnly, Transient, meta=(BindWidget, AllowPrivateAccess = true))
 	TObjectPtr<class UButton> ButtonStartGame = nullptr;
 
+	UPROPERTY(BlueprintReadOnly, Transient, meta=(BindWidget, AllowPrivateAccess = true))
+	TObjectPtr<class UButton> ButtonLeft = nullptr;
+	
+	UPROPERTY(BlueprintReadOnly, Transient, meta=(BindWidget, AllowPrivateAccess = true))
+	TObjectPtr<class UButton> ButtonRight = nullptr;
+	
+	UPROPERTY(BlueprintReadOnly, Transient, meta=(BindWidget, AllowPrivateAccess = true))
+	TObjectPtr<class UCheckBox> DynamicCheck = nullptr;
+	
+	UPROPERTY(BlueprintReadOnly, Transient, meta=(BindWidget, AllowPrivateAccess = true))
+	TObjectPtr<class UTextBlock> TextGoalCount = nullptr;
+	
+	UPROPERTY(BlueprintReadOnly, Transient, meta=(BindWidget, AllowPrivateAccess = true))
+	TObjectPtr<class USizeBox> BoxRemoveGoal = nullptr;
+	
+	UPROPERTY(BlueprintReadOnly, Transient, meta=(BindWidget, AllowPrivateAccess = true))
+	TObjectPtr<class UVerticalBox> BoxAdditionalGoal = nullptr;
+	
 	UFUNCTION()
 	void OnButtonStartHoverStateChanged();
 
@@ -46,9 +70,26 @@ class QUESTMAPPROTOTYPE_API UJournalUserWidget : public UUserWidget
 	
 	UFUNCTION()
 	void OnButtonAddGoalHoverStateChanged();
+
+	UFUNCTION()
+	void OnButtonLeftClicked();
+	
+	UFUNCTION()
+	void OnButtonRightClicked();
+	
+	UFUNCTION()
+	void OnButtonRemoveHoverStateChanged();
+	
+	UFUNCTION()
+	void OnButtonRemoveGoalClicked();
+
+	UFUNCTION()
+	void OnDynamicStateChanged(bool bIsChecked);
 	
 	UFUNCTION()
 	void BindActions();
+
+	FMapQuestGoal AdditionalMapQuestGoal = FMapQuestGoal();
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<class UGoalItemUserWidget> Item = nullptr;
