@@ -24,7 +24,7 @@ void UGoalItemUserWidget::UpdateProperties(const EPickupType Type, const FPickup
 	const FString L_Status = FName::NameToDisplayString(RightStr, true);
 	SetTextPropertyValue(TextType, L_Status);
 
-	const FString Info = FString::FromInt(Stats.Count) + TEXT("/") + FString::FromInt(Stats.Threshold);
+	FString Info = FString::FromInt(Stats.Count) + TEXT("/") + FString::FromInt(Stats.Threshold);
 	SetTextPropertyValue(TextInfo, Info);
 
 	if (IsValid(Status))

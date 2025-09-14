@@ -9,19 +9,9 @@ void ACoinPickup::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 {
 	Super::OnSphereOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 
-
         if (AQuestGameMode* GM = Cast<AQuestGameMode>(GetWorld()->GetAuthGameMode()))
         {
-            int32 NewCoinsCollected = GM->GetCoinsCollected() + 1;
-            int32 CoinsNeededForShield = GM->GetCoinsThreshold();
-
-            GM->SetCoinsCollected(NewCoinsCollected);
-      
-
-            if (NewCoinsCollected >= CoinsNeededForShield)
-            {
-                GM->OnShieldSpawn.Broadcast(GetActorLocation());
-            }
+            GM->SetCoinsCollected(PickupType);
         }
 }
 

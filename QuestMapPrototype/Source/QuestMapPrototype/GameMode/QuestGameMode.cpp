@@ -22,6 +22,7 @@ void AQuestGameMode::BeginPlay()
 void AQuestGameMode::RegisterPickup(EPickupType PickupType)
 {
     if (!HasAuthority()) return;
+    if (PickupType == EPickupType::Health || PickupType == EPickupType::None) return;
     RegisterPickup_Internal(PickupType);
 }
 
@@ -108,22 +109,17 @@ void AQuestGameMode::AddMapQuestGoal(EPickupType Type, const FPickupStats& Goal)
     Multicast_PickupStatsUpdated(Type, Stats);
 }
 
-void AQuestGameMode::SetCoinsCollected(int32 NewCoinsCollected)
+void AQuestGameMode::SetCoinsCollected(EPickupType PickupType)
 {
     if (!HasAuthority())
     {
-        CoinsCollected = NewCoinsCollected;
         return;
     }
-
-    CoinsCollected = NewCoinsCollected;
-
-    FPickupStats& Stats = PickupStats.FindOrAdd(EPickupType::Coin);
-    Stats.Count = FMath::Clamp(CoinsCollected, 0, CoinMax);
-    Stats.Threshold = FMath::Max(Stats.Threshold, CoinMax);
-
-    OnPickupStatsUpdated.Broadcast(EPickupType::Coin, Stats);
-    Multicast_PickupStatsUpdated(EPickupType::Coin, Stats);
+    FPickupStats& Stats = PickupStats.FindOrAdd(PickupType);
+    Stats.Count = FMath::Clamp(Stats.Count + 1, 0, CoinMax);
+  //  Stats.Threshold = FMath::Max(Stats.Threshold, CoinMax);
+    OnPickupStatsUpdated.Broadcast(PickupType, Stats);
+    Multicast_PickupStatsUpdated(PickupType, Stats);
 }
 
 void AQuestGameMode::InitializeDefaultPickups()

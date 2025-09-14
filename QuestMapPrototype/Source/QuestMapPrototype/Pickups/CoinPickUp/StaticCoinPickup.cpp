@@ -8,7 +8,7 @@ AStaticCoinPickup::AStaticCoinPickup()
 {
     PrimaryActorTick.bCanEverTick = false;
 
-    //PickupType = EPickupType::Coin;
+    PickupType = EPickupType::Star;
 }
 
 void AStaticCoinPickup::BeginPlay()
@@ -20,18 +20,9 @@ void AStaticCoinPickup::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent
 {
     Super::OnSphereOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 
-
     if (AQuestGameMode* GM = Cast<AQuestGameMode>(GetWorld()->GetAuthGameMode()))
     {
-        int32 NewCoinsCollected = GM->GetCoinsCollected() + 1;
-        int32 CoinsNeededForShield = GM->GetCoinsThreshold();
-
-        GM->SetCoinsCollected(NewCoinsCollected);
-
-
-        if (NewCoinsCollected >= CoinsNeededForShield)
-        {
-            GM->OnShieldSpawn.Broadcast(GetActorLocation());
-        }
+       if (GM->PickupStats.Find(PickupType) == nullptr) return;
+       GM->RegisterPickup(PickupType); 
     }
 }

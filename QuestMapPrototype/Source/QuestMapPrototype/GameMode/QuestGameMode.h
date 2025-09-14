@@ -72,7 +72,7 @@ public:
     int32 CoinsThreshold = 20;
 
     UFUNCTION(BlueprintCallable, Category = "Pickups")
-    void SetCoinsCollected(int32 NewCoinsCollected);
+    void SetCoinsCollected(EPickupType PickupType);
 
     FORCEINLINE int32 GetCoinsCollected() const { return CoinsCollected; }
     FORCEINLINE int32 GetCoinsThreshold() const { return CoinsThreshold; }

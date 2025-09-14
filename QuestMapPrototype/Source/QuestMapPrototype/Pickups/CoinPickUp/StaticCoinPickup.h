@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "../StarPickUp.h"
+#include "QuestMapPrototype/GameMode/QuestGameMode.h"
 #include "StaticCoinPickup.generated.h"
 
 /**
@@ -27,8 +28,9 @@ protected:
 		const FHitResult& SweepResult
 	) override;
 
-
-protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
+	EPickupType PickupType = EPickupType::None;
+	
 	virtual void BeginPlay() override;
 	
 };

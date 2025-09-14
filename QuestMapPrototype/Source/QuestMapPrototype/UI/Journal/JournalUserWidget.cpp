@@ -140,6 +140,7 @@ void UJournalUserWidget::OnButtonLeftClicked()
 void UJournalUserWidget::OnButtonRightClicked()
 {
 	if (!IsValid(TextGoalCount)) return;
+	AdditionalMapQuestGoal.Threshold++;
 	const bool bEnableLeft = AdditionalMapQuestGoal.Threshold > 0;
 	if (IsValid(ButtonLeft) && ButtonLeft->GetIsEnabled() != bEnableLeft)
 	{
@@ -149,7 +150,6 @@ void UJournalUserWidget::OnButtonRightClicked()
 	{
 		ButtonAdditionalGoal->SetIsEnabled(bEnableLeft);
 	}
-	AdditionalMapQuestGoal.Threshold++;
 	TextGoalCount->SetText(FText::AsNumber(AdditionalMapQuestGoal.Threshold));
 }
 
