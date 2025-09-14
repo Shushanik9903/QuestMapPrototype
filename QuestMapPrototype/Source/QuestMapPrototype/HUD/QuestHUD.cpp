@@ -5,6 +5,7 @@
 #include "QuestMapPrototype/GameMode/QuestGameMode.h"
 #include "QuestMapPrototype/Game/Controller/QuestMapPlayerController.h"
 #include "QuestMapPrototype/UI/FullMap/FullMapUserWidget.h"
+#include "QuestMapPrototype/UI/GenericHUD/GenericHUDUserWidget.h"
 #include "QuestMapPrototype/UI/Journal/JournalUserWidget.h"
 #include "QuestMapPrototype/UI/VictoryWidget/VictoryUserWidget.h"
 
@@ -98,7 +99,7 @@ void AQuestHUD::ShowHUDWidget()
 	{
 		if(IsValid(HUDWidgetSubClass))
 		{
-			HUDWidgetRef = CreateWidget<UUserWidget>(PC, HUDWidgetSubClass);
+			HUDWidgetRef = CreateWidget<UGenericHUDUserWidget>(PC, HUDWidgetSubClass);
 		}
 	}
 	if (IsValid(HUDWidgetRef))
