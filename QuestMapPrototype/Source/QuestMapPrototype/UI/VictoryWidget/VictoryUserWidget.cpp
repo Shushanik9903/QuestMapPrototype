@@ -24,6 +24,7 @@ void UVictoryUserWidget::NativeConstruct()
 	if (IsValid(PC))
 	{
 		FTimerHandle TimerHandle;
+		GetWorld()->GetTimerManager().ClearAllTimersForObject(GetWorld());
 		GetWorld()->GetTimerManager().SetTimer(
 			TimerHandle,
 			[&, this]()
