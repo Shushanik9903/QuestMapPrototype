@@ -9,10 +9,6 @@ void ACoinPickup::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 {
 	Super::OnSphereOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 
-        if (AQuestGameMode* GM = Cast<AQuestGameMode>(GetWorld()->GetAuthGameMode()))
-        {
-            GM->SetCoinsCollected(PickupType);
-        }
 }
 
 ACoinPickup::ACoinPickup()
