@@ -6,6 +6,7 @@
 #include "Components/Border.h"
 #include "Components/TextBlock.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/GameplayStatics.h"
 #include "QuestMapPrototype/Game/Controller/QuestMapPlayerController.h"
 
 void UVictoryUserWidget::NativeConstruct()
@@ -65,5 +66,23 @@ void UVictoryUserWidget::SetVictoryStatus(bool bIsWin) const
 	if (IsValid(TextStatus))
 	{
 		TextStatus->SetText(FText::FromString(Text));
+
+	}
+
+	if (UWorld* World = GetWorld())
+	{
+		FTimerHandle TimerHandle;
+		World->GetTimerManager().SetTimer(
+			TimerHandle,
+			FTimerDelegate::CreateLambda([World]()
+				{
+					
+					FString CurrentLevelName = World->GetMapName();
+					CurrentLevelName.RemoveFromStart(World->StreamingLevelsPrefix); 
+					UGameplayStatics::OpenLevel(World, FName(*CurrentLevelName));
+				}),
+			3.0f,
+			false
+		);
 	}
 }
