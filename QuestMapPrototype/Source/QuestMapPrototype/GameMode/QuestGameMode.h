@@ -69,7 +69,7 @@ public:
     int32 CoinsCollected = 0;
 
     UPROPERTY(EditAnywhere)
-    int32 CoinsThreshold = 2;
+    int32 CoinsThreshold = 20;
 
     UFUNCTION(BlueprintCallable, Category = "Pickups")
     void SetCoinsCollected(int32 NewCoinsCollected);
