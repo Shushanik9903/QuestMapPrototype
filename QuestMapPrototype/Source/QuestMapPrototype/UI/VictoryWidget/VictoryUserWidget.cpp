@@ -60,7 +60,7 @@ void UVictoryUserWidget::SetVictoryStatus(bool bIsWin) const
 	{
 		Border->SetContentColorAndOpacity(Color);
 	}
-	FString Text = bIsWin ? "You Win" : "You Lose";
+	FString Text = bIsWin ? "You Win!" : "You Lose!";
 	if (IsValid(TextStatus))
 	{
 		TextStatus->SetText(FText::FromString(Text));

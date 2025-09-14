@@ -28,6 +28,29 @@ struct FPickupStats
     int32 Count = 0;
 };
 
+USTRUCT(BlueprintType)
+struct FMapQuestGoal
+{
+	GENERATED_BODY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EPickupType PickupType = EPickupType::None;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 MaxCount = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 CollectedCount = 0;
+
+	bool bIsDynamic = false;
+
+	bool operator ==(const FMapQuestGoal& NewGoal) const
+	{
+		const bool bPickupType = PickupType == NewGoal.PickupType;
+		const bool bMaxCount = MaxCount == NewGoal.MaxCount;
+		return bPickupType && bMaxCount;
+	}
+};
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnShieldSpawn, FVector, SpawnLocation);
 UCLASS()
 class QUESTMAPPROTOTYPE_API AQuestGameMode : public AGameMode
