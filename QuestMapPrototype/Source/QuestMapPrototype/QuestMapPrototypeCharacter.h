@@ -55,8 +55,11 @@ protected:
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
-			
 
+	virtual void Jump() override;
+	virtual void StopJumping() override;
+	virtual void Landed(const FHitResult& Hit) override;
+	
 protected:
 
 	virtual void NotifyControllerChanged() override;
@@ -78,5 +81,11 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Audio")
 	TObjectPtr<class UAudioComponent> FootstepAudioComponent = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Audio")
+	USoundBase* JumpSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+	USoundBase* LandSound;
 };
 
