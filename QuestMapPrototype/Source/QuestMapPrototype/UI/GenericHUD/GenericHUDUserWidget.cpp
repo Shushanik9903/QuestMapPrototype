@@ -54,9 +54,9 @@ void UGenericHUDUserWidget::NativeTick(const FGeometry& MyGeometry, float InDelt
 void UGenericHUDUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	OnSecondElapsed(18.f); // min
+	OnSecondElapsed(180.f); // 3 min
 	PreviousDeltaSecond =  FPlatformTime::Seconds();
-	CountdownTime = 18.f;
+	CountdownTime = 180.f;
 	bIsCountdownActive = true;
 	PreviousSecond = CountdownTime;
 }
