@@ -34,17 +34,28 @@ void UVictoryUserWidget::NativeConstruct()
 				{
 					StopAnimation(VictoryAnimLoop);
 				}
-				UKismetSystemLibrary::QuitGame(
+				/*UKismetSystemLibrary::QuitGame(
 					this,
 					PC,
 					EQuitPreference::Quit,
 					false
-				);
+				);*/
 			},
 			10.0f,
 			false
 		);
 	}
+}
+
+void UVictoryUserWidget::NativeDestruct()
+{
+	
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(RestartTimerHandle);
+	}
+
+	Super::NativeDestruct();
 }
 
 void UVictoryUserWidget::StartAnimationFinished()
@@ -55,7 +66,7 @@ void UVictoryUserWidget::StartAnimationFinished()
 	}
 }
 
-void UVictoryUserWidget::SetVictoryStatus(bool bIsWin) const
+void UVictoryUserWidget::SetVictoryStatus(bool bIsWin)
 {
 	FColor Color = bIsWin ? FColor::FromHex("016E6E"): FColor::FromHex("FF3434");
 	if (IsValid(Border))
@@ -68,21 +79,26 @@ void UVictoryUserWidget::SetVictoryStatus(bool bIsWin) const
 		TextStatus->SetText(FText::FromString(Text));
 
 	}
-
+	
 	if (UWorld* World = GetWorld())
 	{
-		FTimerHandle TimerHandle;
 		World->GetTimerManager().SetTimer(
-			TimerHandle,
-			FTimerDelegate::CreateLambda([World]()
-				{
-					
-					FString CurrentLevelName = World->GetMapName();
-					CurrentLevelName.RemoveFromStart(World->StreamingLevelsPrefix); 
-					UGameplayStatics::OpenLevel(World, FName(*CurrentLevelName));
-				}),
+			RestartTimerHandle,
+			this,
+			&UVictoryUserWidget::RestartLevel,
 			3.0f,
 			false
 		);
 	}
 }
+
+void UVictoryUserWidget::RestartLevel()
+{
+	if (UWorld* World = GetWorld())
+	{
+		FString CurrentLevelName = World->GetMapName();
+		CurrentLevelName.RemoveFromStart(World->StreamingLevelsPrefix);
+		UGameplayStatics::OpenLevel(World, FName(*CurrentLevelName));
+	}
+}
+

@@ -16,6 +16,8 @@ class QUESTMAPPROTOTYPE_API UVictoryUserWidget : public UUserWidget
 
 	virtual void NativeConstruct() override;
 
+	virtual void NativeDestruct() override;
+
 	UFUNCTION()
 	void StartAnimationFinished();
 	
@@ -35,5 +37,10 @@ class QUESTMAPPROTOTYPE_API UVictoryUserWidget : public UUserWidget
 
 public:
 	UFUNCTION()
-	void SetVictoryStatus(bool bIsWin) const;
+	void SetVictoryStatus(bool bIsWin);
+
+	FTimerHandle RestartTimerHandle;
+
+	UFUNCTION()
+	void RestartLevel();
 };
