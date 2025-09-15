@@ -26,3 +26,8 @@ void AStaticCoinPickup::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent
        GM->RegisterPickup(PickupType); 
     }
 }
+void AStaticCoinPickup::MoveToLocation(const FVector& NewLocation)
+{
+	SetActorLocation(NewLocation);
+}
+

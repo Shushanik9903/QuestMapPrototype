@@ -11,7 +11,6 @@
 #include "QuestMapPrototype/Pickups/CoinPickUp/StaticCoinPickup.h"
 
 
-DEFINE_LOG_CATEGORY_STATIC(LogSpawnManager, Log, All);
 
 ASpawnManager::ASpawnManager()
 {
@@ -21,10 +20,14 @@ ASpawnManager::ASpawnManager()
 void ASpawnManager::BeginPlay()
 {
     Super::BeginPlay();
+    AQuestGameMode* GM = Cast<AQuestGameMode>(GetWorld()->GetAuthGameMode());
+    if (IsValid(GM))
+    {
+        GM->OnPickupStatsUpdated.AddUniqueDynamic(this, &ASpawnManager::HandlePickupStatsUpdated);
+    }
     GatherHousesAndSpawnCoins();
     GatherBarrelsAndSpawnEnergy();
     SpawnCoins();
-    SpawnStaticCoins();
     SpawnEnergy();
     if (RelocateInterval > 0.f)
     {
@@ -78,11 +81,13 @@ void ASpawnManager::GatherGenericPoints(const FString& NameSubstring, TArray<FSp
 void ASpawnManager::GatherHousesAndSpawnCoins()
 {
     GatherGenericPoints(TEXT("house"),
-        reinterpret_cast<TArray<FSpawnPointBase>&>(SpawnPointsForCoins),
+        reinterpret_cast<TArray<FSpawnPointBase>&>(SpawnPointsForCoin),
         [](const AActor* Actor, FSpawnPointBase& OutP)
         {
         }
     );
+    SpawnPointsForStars = SpawnPointsForCoin;
+    SpawnPointsForStars.Reserve(SpawnPointsForStars.Num());
 }
 
 void ASpawnManager::GatherBarrelsAndSpawnEnergy()
@@ -163,17 +168,25 @@ FVector ASpawnManager::ChooseValidSpawnLocationFromArray(const TArray<FSpawnPoin
     return Points[0].Location;
 }
 
+void ASpawnManager::HandlePickupStatsUpdated(EPickupType PickupType, const FPickupStats& Stats)
+{
+    if (!HasAuthority()) return;
+    if (PickupType != EPickupType::Star) return;
+    SpawnStars(Stats.Threshold);
+    bRelocateStars = Stats.bIsDynamic;
+}
+
 void ASpawnManager::SpawnCoins()
 {
     SpawnedCoins.Empty();
     UQuestGameInstance* GI = Cast<UQuestGameInstance>(GetGameInstance());
     if (!GI) return;
-    int32 CoinCount = GI->CoinCount;
-    if (CoinCount <= 0 || SpawnPointsForCoins.Num() == 0 || !CoinClass) return;
+    int32 CoinCount = GI->CoinCount + 1; 
+    if (CoinCount <= 0 || SpawnPointsForCoin.Num() == 0 || !CoinClass) return;
 
     for (int32 i = 0; i < CoinCount; ++i)
     {
-        FVector Loc = ChooseValidSpawnLocationFromArray(reinterpret_cast<const TArray<FSpawnPointBase>&>(SpawnPointsForCoins),
+        FVector Loc = ChooseValidSpawnLocationFromArray(reinterpret_cast<const TArray<FSpawnPointBase>&>(SpawnPointsForCoin),
             reinterpret_cast<const TArray<AActor*>&>(SpawnedCoins)); 
 
         FActorSpawnParameters Params;
@@ -186,25 +199,25 @@ void ASpawnManager::SpawnCoins()
     }
 }
 
-void ASpawnManager::SpawnStaticCoins()
+void ASpawnManager::SpawnStars(int32 Count)
 {
-    SpawnedStaticCoins.Empty();
+    SpawnedStars.Empty();
     UQuestGameInstance* GI = Cast<UQuestGameInstance>(GetGameInstance());
     if (!GI) return;
-    int32 CoinCount = GI->CoinCount;
-    if (CoinCount <= 0 || SpawnPointsForCoins.Num() == 0 || !CoinClass) return;
+    int32 CoinCount = Count; 
+    if (CoinCount <= 0 || SpawnPointsForStars.Num() == 0 || !StarClass) return;
 
     for (int32 i = 0; i < CoinCount; ++i)
     {
-        FVector Loc = ChooseValidSpawnLocationFromArray(reinterpret_cast<const TArray<FSpawnPointBase>&>(SpawnPointsForCoins),
-            reinterpret_cast<const TArray<AActor*>&>(SpawnedStaticCoins));
+        FVector Loc = ChooseValidSpawnLocationFromArray(reinterpret_cast<const TArray<FSpawnPointBase>&>(SpawnPointsForStars),
+            reinterpret_cast<const TArray<AActor*>&>(SpawnedStars)); 
 
         FActorSpawnParameters Params;
         Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-        AStaticCoinPickup* NewCoin = GetWorld()->SpawnActor<AStaticCoinPickup>(StaticCoinClass, Loc, FRotator::ZeroRotator, Params);
+        AStaticCoinPickup* NewCoin = GetWorld()->SpawnActor<AStaticCoinPickup>(StarClass, Loc, FRotator::ZeroRotator, Params);
         if (NewCoin)
         {
-            SpawnedStaticCoins.Add(NewCoin);
+            SpawnedStars.Add(NewCoin);
         }
     }
 }
@@ -241,12 +254,12 @@ void ASpawnManager::SpawnEnergy()
 
 void ASpawnManager::OnRelocateTick()
 {
-    if (SpawnedCoins.Num() > 0 && SpawnPointsForCoins.Num() > 0)
+    if (SpawnedCoins.Num() > 0 && SpawnPointsForCoin.Num() > 0)
     {
         for (ACoinPickup* Coin : SpawnedCoins)
         {
             if (!Coin) continue;
-            FVector Chosen = ChooseValidSpawnLocationFromArray(reinterpret_cast<const TArray<FSpawnPointBase>&>(SpawnPointsForCoins),
+            FVector Chosen = ChooseValidSpawnLocationFromArray(reinterpret_cast<const TArray<FSpawnPointBase>&>(SpawnPointsForCoin),
                 reinterpret_cast<const TArray<AActor*>&>(SpawnedCoins));
             Coin->MoveToLocation(Chosen);
         }
@@ -261,6 +274,22 @@ void ASpawnManager::OnRelocateTick()
             for (AHealthPickup* E : SpawnedEnergy) ExistingEnergyActors.Add(E);
             FVector Chosen = ChooseValidSpawnLocationFromArray(reinterpret_cast<const TArray<FSpawnPointBase>&>(SpawnPointsForEnergy), ExistingEnergyActors);
             Energy->MoveToLocation(Chosen);
+        }
+    }
+    if (bRelocateStars)
+    {
+        if (SpawnedStars.Num() > 0 && SpawnPointsForStars.Num() > 0)
+        {
+            for (AStaticCoinPickup* Coin : SpawnedStars)
+            {
+                if (!Coin) continue;
+                FVector Chosen = ChooseValidSpawnLocationFromArray(
+                    reinterpret_cast<const TArray<FSpawnPointBase>&>(SpawnPointsForStars),
+                    reinterpret_cast<const TArray<AActor*>&>(SpawnedStars));
+                Chosen.X += 1500;
+                Chosen.Y +=2000;
+                Coin->MoveToLocation(Chosen);
+            }
         }
     }
 }

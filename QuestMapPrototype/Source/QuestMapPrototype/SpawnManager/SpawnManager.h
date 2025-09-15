@@ -45,13 +45,21 @@ protected:
     FVector FindNearCenterLocation(const AActor* LActor) const;
     bool GetLandscapeHitBelow(const FVector& Start, FVector& OutHitLocation, AActor*& OutHitActor) const;
     void SpawnCoins();
-    void SpawnStaticCoins();
+    void SpawnStars(int32 Count);
     void SpawnEnergy();
     void OnRelocateTick();
     FVector ChooseValidSpawnLocationFromArray(const TArray<FSpawnPointBase>& Points, const TArray<AActor*>& ExistingActors) const;
 
+    UFUNCTION()
+    void HandlePickupStatsUpdated(EPickupType PickupType, const FPickupStats& Stats);
+
     UPROPERTY()
-    TArray<FSpawnCoinsPoint> SpawnPointsForCoins;
+    TArray<FSpawnCoinsPoint> SpawnPointsForStars;
+
+    bool bRelocateStars = false;
+    
+    UPROPERTY()
+    TArray<FSpawnCoinsPoint> SpawnPointsForCoin;
 
     UPROPERTY()
     TArray<FSpawnEnergyPoint> SpawnPointsForEnergy;
@@ -60,7 +68,7 @@ protected:
 	TArray<class ACoinPickup*> SpawnedCoins; 
 
     UPROPERTY()
-	TArray<class AStaticCoinPickup*> SpawnedStaticCoins;
+	TArray<class AStaticCoinPickup*> SpawnedStars;
 
     UPROPERTY()
     TArray<class AHealthPickup*> SpawnedEnergy;
@@ -71,7 +79,7 @@ protected:
 	TSubclassOf<ACoinPickup> CoinClass; 
 
     UPROPERTY(EditAnywhere, Category = "Spawn")
-	TSubclassOf<class AStaticCoinPickup> StaticCoinClass;
+	TSubclassOf<class AStaticCoinPickup> StarClass;
 
     UPROPERTY(EditAnywhere, Category="Spawn")
     TSubclassOf<AHealthPickup> EnergyClass;

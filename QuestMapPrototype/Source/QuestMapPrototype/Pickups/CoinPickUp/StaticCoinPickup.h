@@ -32,5 +32,9 @@ protected:
 	EPickupType PickupType = EPickupType::None;
 	
 	virtual void BeginPlay() override;
+public:
 	
+	UFUNCTION()
+	void MoveToLocation(const FVector& NewLocation);
+
 };
