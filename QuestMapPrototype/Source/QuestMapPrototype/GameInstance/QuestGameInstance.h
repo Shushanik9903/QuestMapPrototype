@@ -15,7 +15,7 @@ class QUESTMAPPROTOTYPE_API UQuestGameInstance : public UGameInstance
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 CoinCount = 10;
+	int32 CoinCount = 12;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 EnergyCount = 10;	
