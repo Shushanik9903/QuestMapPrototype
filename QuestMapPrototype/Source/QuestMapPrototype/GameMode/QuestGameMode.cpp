@@ -50,12 +50,12 @@ void AQuestGameMode::RegisterPickup_Internal(EPickupType PickupType)
     }
     OnPickupStatsUpdated.Broadcast(PickupType, Stats);
     Multicast_PickupStatsUpdated(PickupType, Stats);
-    if (GEngine)
-    {
-        const FString PickupName = UEnum::GetValueAsName(PickupType).ToString();
-        const FString Msg = FString::Printf(TEXT("%s: %d / %d"), *PickupName, Stats.Count, MaxForType);
-        GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, Msg);
-    }
+	/*if (GEngine)
+	{
+		const FString PickupName = UEnum::GetValueAsName(PickupType).ToString();
+		const FString Msg = FString::Printf(TEXT("%s: %d / %d"), *PickupName, Stats.Count, MaxForType);
+		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, Msg);
+	}*/
     bool bAllReached = true;
     bool bHasRelevantEntries = false;
     for (const TPair<EPickupType, FPickupStats>& Pair : PickupStats)
