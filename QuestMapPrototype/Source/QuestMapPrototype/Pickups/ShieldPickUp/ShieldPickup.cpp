@@ -14,6 +14,7 @@ void AShieldPickup::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AA
 {
 	Super::OnSphereOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 	HandleShieldSpawn();
+	Destroy();
 }
 
 void AShieldPickup::HandleShieldSpawn()

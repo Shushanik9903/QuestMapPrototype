@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Pickup.h"
@@ -69,7 +69,32 @@ void APickup::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 	if (AQuestGameMode* GM = Cast<AQuestGameMode>(UGameplayStatics::GetGameMode(GetWorld())))
 	{
 		GM->RegisterPickup(PickupType);
+		bool bAllReached = true;
+		bool bHasRelevantEntries = false;
+		for (const TPair<EPickupType, FPickupStats>& Pair : GM->PickupStats)
+		{
+			if (Pair.Key != EPickupType::Coin || Pair.Key == EPickupType::Star) continue;
+			if (Pair.Value.Threshold <= 0)
+			{
+				continue;
+			}
+			bHasRelevantEntries = true;
+			int32 Required = Pair.Value.Threshold;
+			if (Pair.Value.Count < Required)
+			{
+				bAllReached = false;
+				break;
+			}
+		}
+		if (bHasRelevantEntries && bAllReached)
+		{
+			if (GM->OnShieldSpawn.IsBound())
+			{
+				GM->OnShieldSpawn.Broadcast(FVector::ZeroVector);
+			}
+		}
 	}
+
 	Destroy();
 }
 
