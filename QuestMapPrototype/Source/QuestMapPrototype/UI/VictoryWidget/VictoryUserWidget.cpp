@@ -8,7 +8,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "QuestMapPrototype/Game/Controller/QuestMapPlayerController.h"
-
+#include "QuestMapPrototype/HUD/QuestHUD.h"
 void UVictoryUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -77,7 +77,11 @@ void UVictoryUserWidget::SetVictoryStatus(bool bIsWin)
 	if (IsValid(TextStatus))
 	{
 		TextStatus->SetText(FText::FromString(Text));
-
+		AQuestHUD* QuestHUD = Cast<AQuestHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+		if (IsValid(QuestHUD))
+		{
+			QuestHUD->IsEnd = true;
+		}
 	}
 	
 	if (UWorld* World = GetWorld())
