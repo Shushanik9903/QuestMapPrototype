@@ -7,7 +7,7 @@
 AQuestGameMode::AQuestGameMode()
 {
     ShieldThreshold = 1;
-    CoinMax = 20;
+    CoinMax = 12;
 }
 
 void AQuestGameMode::BeginPlay()
